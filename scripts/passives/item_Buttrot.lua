@@ -1,4 +1,4 @@
-local game = pExodus.game
+local game = pExodus.Game
 local Entities = pExodus.Entities
 
 local function getSize(scale, flags)
@@ -23,7 +23,7 @@ pExodus:AddItemCostume(pExodus.ItemId.BUTTROT, pExodus.CostumeId.BUTTROT)
 
 function pExodus.buttrotUpdate()
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(pExodus.ItemId.BUTTROT) then
             local entities = Isaac.GetRoomEntities()
@@ -85,7 +85,7 @@ function pExodus.buttrotUpdate()
                         buttchance = 1
                     end
                     
-                    if pExodus.rng:RandomInt(buttchance) == 0 then
+                    if pExodus.RNG:RandomInt(buttchance) == 0 then
                         entities[i]:GetSprite():Load("gfx/blight_bomb.anm2", true)
                         entData.IsButtrotBomb = true
                     else
@@ -124,7 +124,7 @@ pExodus:AddModCallback(ModCallbacks.MC_POST_UPDATE, pExodus.buttrotUpdate)
 
 function pExodus.buttrotTear(tear)
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(pExodus.ItemId.BUTTROT) then
             local buttchance = 12 - player.Luck
@@ -133,7 +133,7 @@ function pExodus.buttrotTear(tear)
                 buttchance = 1
             end
             
-            if pExodus.rng:RandomInt(buttchance) == 0 then
+            if pExodus.RNG:RandomInt(buttchance) == 0 then
                 tear:ChangeVariant(Entities.BLIGHT_TEAR.variant)
                 local sprite = tear:GetSprite()
                 local size = getSize(tear.Scale, tear.TearFlags)

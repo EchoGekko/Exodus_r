@@ -1,7 +1,7 @@
 local ItemVariables = pExodus.ItemVariables
 local Entities = pExodus.Entities
 local ItemId = pExodus.ItemId
-local game = pExodus.game
+local game = pExodus.Game
 
 local Count = 0
 local Counter = nil
@@ -24,7 +24,7 @@ end
 
 function pExodus.cobaltNecklaceUpdate()
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(ItemId.COBALT_NECKLACE) then
             local room = game:GetRoom()
@@ -63,7 +63,7 @@ pExodus:AddModCallback(ModCallbacks.MC_POST_UPDATE, pExodus.cobaltNecklaceUpdate
 
 function pExodus.cobaltNecklaceNewRoom()
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(ItemId.COBALT_NECKLACE) and (not Counter or not Counter:Exists()) then
             Counter = Isaac.Spawn(Entities.SCORE_DISPLAY.id, Entities.SCORE_DISPLAY.variant, 0, player.Position + Vector(0, -69), pExodus.NullVector, player)
@@ -76,7 +76,7 @@ pExodus:AddModCallback(ModCallbacks.MC_POST_NEW_ROOM, pExodus.cobaltNecklaceNewR
 
 function pExodus.cobaltNecklaceDamage(target, amount, flags, source, cdtimer)
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(ItemId.COBALT_NECKLACE) then
             Count = 0
@@ -90,12 +90,8 @@ end
 pExodus:AddModCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, pExodus.cobaltNecklaceDamage, { EntityType.ENTITY_PLAYER })
 
 function pExodus.cobaltNecklaceCache(player, flag)
-    for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
-        
-        if player:HasCollectible(ItemId.COBALT_NECKLACE) and flag == CacheFlag.CACHE_DAMAGE and Count >= 0 then
-            player.Damage = player.Damage + (math.floor(((Count * 0.7)^0.7) * 100)) / 150 * player:GetCollectibleNum(ItemId.COBALT_NECKLACE)
-        end
+    if player:HasCollectible(ItemId.COBALT_NECKLACE) and flag == CacheFlag.CACHE_DAMAGE and Count >= 0 then
+        player.Damage = player.Damage + (math.floor(((Count * 0.7)^0.7) * 100)) / 150 * player:GetCollectibleNum(ItemId.COBALT_NECKLACE)
     end
 end
 
@@ -103,7 +99,7 @@ pExodus:AddModCallback(ModCallbacks.MC_EVALUATE_CACHE, pExodus.cobaltNecklaceCac
 
 function pExodus.cobaltNecklaceRender()
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if Counter then
             if player:HasCollectible(ItemId.COBALT_NECKLACE) then

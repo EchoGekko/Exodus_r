@@ -1,16 +1,16 @@
 local ItemVariables = pExodus.ItemVariables
 local ItemId = pExodus.ItemId
-local rng = pExodus.rng
+local rng = pExodus.RNG
 
 pExodus:AddItemCostume(ItemId.CURSED_METRONOME, pExodus.CostumeId.CURSED_METRONOME)
 
 function pExodus.cursedMetronomeAdd(player)
-    local hp = player:GetHearts() - 2
-	player:AddHearts(hp * -1)
+    local hp = player.ref:GetHearts() - 2
+	player.ref:AddHearts(hp * -1)
 	hp = hp + 2
-
+    
 	for i = 1, rng:RandomInt(hp / 2) do
-		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_HEART, HeartSubType.HEART_FULL,  Isaac.GetFreeNearPosition(player.Position, 20), Vector(0, 0), player)
+		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_HEART, HeartSubType.HEART_FULL,  Isaac.GetFreeNearPosition(player.ref.Position, 20), pExodus.NullVector, player.ref)
 	end
 end
 

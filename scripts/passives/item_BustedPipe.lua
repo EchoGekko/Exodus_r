@@ -2,7 +2,7 @@ pExodus:AddItemCostume(pExodus.ItemId.BUSTED_PIPE, pExodus.CostumeId.BUSTED_PIPE
 
 function pExodus:bustedPipeUpdate()
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(pExodus.ItemId.BUSTED_PIPE) then        
             for i, entity in pairs(Isaac.GetRoomEntities()) do
@@ -28,7 +28,7 @@ function pExodus:bustedPipeUpdate()
                                 entity.Velocity = entity.Velocity * 1.6
                             end
                             
-                            if pExodus.rng:RandomInt(3) == 0 and entity.Position:DistanceSquared(player.Position) > 30^2 then
+                            if pExodus.RNG:RandomInt(3) == 0 and entity.Position:DistanceSquared(player.Position) > 30^2 then
                                 for i = 1, player:GetCollectibleNum(pExodus.ItemId.BUSTED_PIPE) do
                                     local creep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.PLAYER_CREEP_GREEN, 0, entity.Position + (RandomVector() * (i - 1) * 30), pExodus.NullVector, entity):ToEffect()
                                     creep:SetTimeout(20)

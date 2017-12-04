@@ -1,12 +1,12 @@
 local ColourIsBlack = false
-local sfx = pExodus.sfx
-local game = pExodus.game
+local sfx = pExodus.SFX
+local game = pExodus.Game
 
 pExodus:AddItemCostume(pExodus.ItemId.BEEHIVE, pExodus.CostumeId.BEEHIVE)
 
 function pExodus.beehiveUpdate()
     for pIndex = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[pIndex]
+        local player = pExodus.Players[pIndex].ref
         
         if player:HasCollectible(pExodus.ItemId.BEEHIVE) then
             if player.FrameCount % (math.random(18, 20)) == 0 then

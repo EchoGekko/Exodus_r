@@ -9,13 +9,14 @@ local Exodus = RegisterMod("Exodus", 1)
 pExodus = {}
 
 -- Generic variables to be used by any code outside this main.lua to prevent calling game methods multiple times (Public)
-pExodus.game = Game()
-pExodus.rng = RNG()
-pExodus.sfx = SFXManager()
-pExodus.music = MusicManager()
-pExodus.itemPool = pExodus.game:GetItemPool()
+pExodus.Game = Game()
+pExodus.RNG = RNG()
+pExodus.SFX = SFXManager()
+pExodus.Music = MusicManager()
+pExodus.ItemPool = pExodus.Game:GetItemPool()
 pExodus.NullVector = Vector(0, 0)
 pExodus.Players = {}
+pExodus.PlayerCount = 0
 
 ----------------------
 --<<<ENUMERATIONS>>>--
@@ -285,13 +286,10 @@ function Exodus.newGame(fromSave)
             UNHOLY_MANTLE = { HasUnholyMantle = false, HasEffect = true },
             TECH_360 = { HasTech360 = false },
             PAPER_CUT = { HasPaperCut = false },
-            FORGET_ME_LATER = { HasForgetMeLater = false, NumberFloors = 0 },
-            DRAGON_BREATH = { HasDragonBreath = false },
             RITUAL_CANDLE = { LitCandles = 0, HasBonus = false, Pentagram = nil, SoundPlayed = false },
             PIG_BLOOD = { HasPigBlood = false },
             MYSTERIOUS_MUSTACHE = { HasMysteriousMustache = false, ItemCount = 0, CoinCount = 0 },
             WELCOME_MAT = { HasWelcomeMat = false, Position = NullVector, Direction = 0, CloseToMat = false, Placed = true, AppearFrame = nil },
-            GLUTTONYS_STOMACH = { Parts = 0, RenderBar = Sprite() },
             ASTRO_BABY = { UsedBox = 0 },
             ROBOBABY_360 = { UsedBox = 0 },
             LIL_RUNE = { HasLilRune = false, UsedBox = 0, State = "Purple", RuneType = 0 },
@@ -302,8 +300,6 @@ function Exodus.newGame(fromSave)
             SLING = { Icon = Sprite() },
             HOLY_WATER = { Splashed = false },
             FOOLS_GOLD = { HasFoolsGold = false },
-            MAKEUP_REMOVER = { HasMakeupRemover = false },
-            HAND_OF_GREED = { RedHearts = 3, SoulHearts = 0, ActiveItem = 0, HasGreedHand = false },
             THE_APOCRYPHON = { HasBeenToAngel = false, ChangeBack = false, ApocDamage = 0, ApocTearDelay = 0, ApocSpeed = 0, ApocLuck = 0, ApocShotSpeed = 0, ApocRange = 0 },
             BROKEN_GLASSES = { Broke = false },
             
@@ -353,8 +349,6 @@ function Exodus.newGame(fromSave)
         pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Load("gfx/effects/Pseudobulbar Icon.anm2", true)
         pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Play("Idle", true)
         
-        pExodus.ItemVariables.GLUTTONYS_STOMACH.RenderBar:Load("gfx/effects/Gluttony Stomach Bar.anm2", true)
-        
         pExodus.ItemVariables.SLING.Icon:Load("gfx/effects/Sling_marker_effect.anm2", true)
         pExodus.ItemVariables.SLING.Icon:Play("Idle", true)
 
@@ -387,8 +381,8 @@ function Exodus.newGame(fromSave)
     end
     
 	-- Ensures the RNG stays seeded to the run's seed
-	pExodus.rng:SetSeed(pExodus.game:GetSeeds():GetStartSeed(), 0)
-    math.randomseed(pExodus.game:GetSeeds():GetStartSeed())
+	pExodus.RNG:SetSeed(pExodus.Game:GetSeeds():GetStartSeed(), 0)
+    math.randomseed(pExodus.Game:GetSeeds():GetStartSeed())
 end
 
 -- Initial variable definition
@@ -397,6 +391,25 @@ Exodus.newGame(false)
 --------------------------------
 --<<<BASE MOD FUNCTIONALITY>>>-- (Effectively a simple Exodus API)
 --------------------------------
+
+-- Stores all player entities in the pExodus.Players table with a reference and an index to the table
+local function GetPlayers()
+    pExodus.Players = {}
+    pExodus.PlayerCount = pExodus.Game:GetNumPlayers()
+    
+    for i = 1, pExodus.PlayerCount do
+        pExodus.Players[i] = { ref = Isaac.GetPlayer(i - 1), index = i }
+    end
+end
+
+-- Returns a player table from pExodus.Players that matches the passed in player reference
+function pExodus.GetPlayerByRef(ref)
+    for i, player in ipairs(pExodus.Players) do
+        if player.ref.Index == ref.Index and player.ref.InitSeed == ref.InitSeed then
+            return player
+        end
+    end
+end
 
 -- Allows developers to easily tie a costume to an item by calling pExodus:AddItemCostume(ItemID, CostumeID) (Private)
 local ItemCostumes = {}
@@ -410,7 +423,8 @@ pExodus.ExodusCallbacks = {
 	MC_ADD_COLLECTIBLE = 0,
 	MC_REMOVE_COLLECTIBLE = 1
 }
--- Easy private reference to the custom callbacks (Private)
+
+-- Private reference to the custom callbacks (Private)
 local ExodusCallbacks = pExodus.ExodusCallbacks
 
 -- Stores all functions and parameters to use with the custom callbacks (Private)
@@ -429,7 +443,7 @@ function pExodus:AddCustomCallback(callback, func, params)
 		else
 			error("Expected an item ID argument to MC_ADD_COLLECTIBLE callback.", 2)
 		end
-	elseif callback == ExodusCallbacks.MC_REMOVE_COLLECTILBE then
+	elseif callback == ExodusCallbacks.MC_REMOVE_COLLECTIBLE then
 		if params and type(params) == "number" then
             for i = 1, 4 do
                 table.insert(CustomCalls[callback][i], { ItemCount = 0, ItemId = params, FunctionRef = func })
@@ -445,11 +459,13 @@ local ExodusCalls = {
 	[ModCallbacks.MC_POST_GAME_STARTED] = {},
     [ModCallbacks.MC_POST_UPDATE] = {},
     [ModCallbacks.MC_POST_RENDER] = {},
-    [ModCallbacks.MC_ENTITY_TAKE_DMG] = {},
     [ModCallbacks.MC_POST_NEW_ROOM] = {},
+    [ModCallbacks.MC_POST_NEW_LEVEL] = {},
+    [ModCallbacks.MC_ENTITY_TAKE_DMG] = {},
     [ModCallbacks.MC_EVALUATE_CACHE] = {},
     [ModCallbacks.MC_POST_FIRE_TEAR] = {},
     [ModCallbacks.MC_NPC_UPDATE] = {},
+    [ModCallbacks.MC_POST_NPC_INIT] = {},
 	[ModCallbacks.MC_POST_TEAR_INIT] = {},
 	[ModCallbacks.MC_PRE_PICKUP_COLLISION] = {}
 }
@@ -465,6 +481,7 @@ end
 
 -- Runs all functions attached using an MC_POST_GAME_STARTED callback (Private)
 function Exodus:PostGameStarted(fromSave)
+    GetPlayers()
 	Exodus.newGame(fromSave)
 
 	for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_GAME_STARTED]) do
@@ -483,15 +500,18 @@ Exodus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Exodus.PostGameStarted)
    Handles adding and removing of costumes tied to items using pExodus:AddItemCostume()
 ]]
 function Exodus:PostUpdate()
+    GetPlayers()
+    
 	for pIndex = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[pIndex]
+        local exodusPlayer = pExodus.Players[pIndex]
+        local player = exodusPlayer.ref
         
         for u, functionTable in ipairs(CustomCalls[ExodusCallbacks.MC_ADD_COLLECTIBLE][pIndex]) do
             local itemCount = player:GetCollectibleNum(functionTable.ItemId)
             
             if functionTable.ItemCount < itemCount then
                 for i = functionTable.ItemCount, itemCount - 1 do
-                    functionTable.FunctionRef(player)
+                    functionTable.FunctionRef(exodusPlayer)
                 end
             end
             
@@ -500,10 +520,15 @@ function Exodus:PostUpdate()
         
         for u, functionTable in ipairs(CustomCalls[ExodusCallbacks.MC_REMOVE_COLLECTIBLE][pIndex]) do
             local itemCount = player:GetCollectibleNum(functionTable.ItemId)
+            local noneLeft = false
             
             if functionTable.ItemCount > itemCount then
                 for z = functionTable.ItemCount - 1, itemCount, -1 do
-                    functionTable.FunctionRef(player)
+                    if z == 0 then
+                        noneLeft = true
+                    end
+                    
+                    functionTable.FunctionRef(exodusPlayer, noneLeft)
                 end
             end
             
@@ -532,11 +557,6 @@ Exodus:AddCallback(ModCallbacks.MC_POST_UPDATE, Exodus.PostUpdate)
 
 -- Runs all functions attached using an MC_POST_RENDER callback (Private)
 function Exodus:PostRender()
-    pExodus.PlayerCount = pExodus.game:GetNumPlayers()
-    for i = 1, pExodus.PlayerCount do
-        pExodus.Players[i] = Isaac.GetPlayer(i - 1)
-    end
-    
     for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_RENDER]) do
         functionTable.FunctionRef()
     end
@@ -575,12 +595,10 @@ Exodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Exodus.EntityTakeDamage)
    Passes the current room into the attached function to streamline development and prevent unnecessary function calls
 ]]
 function Exodus:PostNewRoom()
-    local room = pExodus.game:GetRoom()
+    GetPlayers()
     
-    pExodus.PlayerCount = pExodus.game:GetNumPlayers()
-    for i = 1, pExodus.PlayerCount do
-        pExodus.Players[i] = Isaac.GetPlayer(i - 1)
-    end
+    local room = pExodus.Game:GetRoom()
+    pExodus.Room = room
     
     for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_NEW_ROOM]) do
         functionTable.FunctionRef(room)
@@ -588,6 +606,23 @@ function Exodus:PostNewRoom()
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Exodus.PostNewRoom)
+
+--[[ (Private)
+   Runs all functions attached using an MC_POST_NEW_LEVEL callback
+   Passes the current level into the attached function to streamline development and prevent unnecessary function calls
+]]
+function Exodus:PostNewLevel()
+    GetPlayers()
+    
+    local level = pExodus.Game:GetLevel()
+    pExodus.Level = level
+    
+    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_NEW_LEVEL]) do
+        functionTable.FunctionRef(level)
+    end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Exodus.PostNewLevel)
 
 --[[ (Private)
    Runs all functions attached using an MC_EVALUATE_CACHE callback
@@ -640,6 +675,26 @@ function Exodus:NpcUpdate(npc)
 end
 
 Exodus:AddCallback(ModCallbacks.MC_NPC_UPDATE, Exodus.NpcUpdate)
+
+--[[ (Private)
+   Runs all functions attached using an MC_POST_NPC_INIT callback
+   Allows the passing of a Type, Variant and SubType to the callback (in that order) to streamline development and prevent unnecessary function calls
+]]
+function Exodus:PostNpcInit(npc)
+    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_NPC_INIT]) do
+		if not functionTable.Parameters then
+			functionTable.FunctionRef(npc)
+        elseif functionTable.Parameters[1] == npc.Type then
+            if not functionTable.Parameters[2] or functionTable.Parameters[2] == npc.Variant then
+                if not functionTable.Parameters[3] or functionTable.Parameters[3] == npc.SubType then
+                    functionTable.FunctionRef(npc)
+                end
+            end
+        end
+    end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Exodus.PostNpcInit)
 
 --[[ (Private)
    Runs all functions attached using an MC_PRE_PICKUP_COLLISION callback

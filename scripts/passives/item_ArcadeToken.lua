@@ -1,8 +1,7 @@
-local ItemVariables = pExodus.ItemVariables
 local ItemId = pExodus.ItemId
 
 function pExodus.arcadeTokenUpdate(player)
-	Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY, Isaac.GetFreeNearPosition(player.Position, 50), Vector(0, 0), nil)
+	Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY, Isaac.GetFreeNearPosition(player.ref.Position, 50), pExodus.NullVector, nil)
 end
 
 pExodus:AddCustomCallback(pExodus.ExodusCallbacks.MC_ADD_COLLECTIBLE, pExodus.arcadeTokenUpdate, ItemId.ARCADE_TOKEN)

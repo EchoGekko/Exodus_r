@@ -6,7 +6,7 @@ local ValidFamiliars = {
 
 function pExodus.dejaVuUpdate()
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(pExodus.ItemId.DEJA_VU) then
             for i, entity in pairs(Isaac.GetRoomEntities()) do
@@ -20,7 +20,7 @@ function pExodus.dejaVuUpdate()
                                 entData.ReturnChance = 50 + player.Luck
                             end
                             
-                            if pExodus.rng:RandomInt(101) < entData.ReturnChance then
+                            if pExodus.RNG:RandomInt(101) < entData.ReturnChance then
                                 local tearPosition = entData.OriginalData.Position
                                 
                                 if not tearPosition then

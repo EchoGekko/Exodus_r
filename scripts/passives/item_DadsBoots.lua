@@ -1,6 +1,6 @@
 local ItemVariables = pExodus.ItemVariables
 local ItemId = pExodus.ItemId
-local sfx = pExodus.sfx
+local sfx = pExodus.SFX
 
 pExodus:AddItemCostume(ItemId.DADS_BOOTS, pExodus.CostumeId.DADS_BOOTS)
 
@@ -27,7 +27,7 @@ local Squishables = {
 
 function pExodus.dadsBootsUpdate()
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(ItemId.DADS_BOOTS) then
             for i, entity in pairs(Isaac.GetRoomEntities()) do

@@ -1,7 +1,7 @@
 local Entities = pExodus.Entities
 local ItemVariables = pExodus.ItemVariables
 local ItemId = pExodus.ItemId
-local game = pExodus.game
+local game = pExodus.Game
 
 local Charge = 0
  
@@ -20,7 +20,7 @@ function pExodus.dragonBreathUpdate()
     local room = game:GetRoom()
     
     for i = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[i]
+        local player = pExodus.Players[i].ref
         
         if player:HasCollectible(ItemId.DRAGON_BREATH) then
             if room:GetFrameCount() == 1 then
@@ -86,7 +86,7 @@ function pExodus.dragonBreathUpdate()
                 end
 
                 if entity.Type == Entities.FIREBALL.id and entity.Variant == Entities.FIREBALL.variant then
-                    if pExodus.rng:RandomInt(3) == 0 then
+                    if pExodus.RNG:RandomInt(3) == 0 then
                         Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.EMBER_PARTICLE, 0, Vector(entity.Position.X, entity.Position.Y - 12), RandomVector() * ((math.random() * 4) + 1), player)
                     end
                     
@@ -102,7 +102,7 @@ function pExodus.dragonBreathUpdate()
                         end
                     end
                     
-                    if pExodus.rng:RandomInt(4) == 0 and entity:ToTear().TearFlags & TearFlags.TEAR_LUDOVICO == 0 then
+                    if pExodus.RNG:RandomInt(4) == 0 and entity:ToTear().TearFlags & TearFlags.TEAR_LUDOVICO == 0 then
                         fire = Isaac.Spawn(1000, 51, 0, Vector(entity.Position.X, entity.Position.Y + entity:ToTear().Height), (entity.Velocity:Rotated(math.random(0, 360)) / 2), entity)
                         fire:GetData().Putout = true
                         fire:GetSprite():Play("FireStage03", true)
