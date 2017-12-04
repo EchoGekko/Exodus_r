@@ -2272,42 +2272,6 @@ end
 
 Exodus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Exodus.welcomeMatCache)
 
---<<<MYSTERIOUS MUSTACHE>>>--
-function Exodus:mysteriousMustacheUpdate()
-    local player = Isaac.GetPlayer(0)
-    local currentSoulHearts = player:GetSoulHearts()
-    
-    if player:HasCollectible(ItemId.MYSTERIOUS_MUSTACHE) then
-        if not ItemVariables.MYSTERIOUS_MUSTACHE.HasMysteriousMoustache then
-            player:AddNullCostume(CostumeId.MYSTERIOUS_MUSTACHE)
-            ItemVariables.MYSTERIOUS_MUSTACHE.HasMysteriousMoustache = true
-        end
-        
-        if player:GetCollectibleCount() > ItemVariables.MYSTERIOUS_MUSTACHE.ItemCount and game:GetRoom():GetType() == RoomType.ROOM_SHOP and rng:RandomInt(2) == 1 then
-            player:AddHearts(1)
-            
-            if currentSoulHearts ~= player:GetSoulHearts() then
-                currentSoulHearts = player:GetSoulHearts()
-                player:AddHearts(-1 * currentSoulHearts)
-                player:AddHearts(1)
-                player:AddSoulHearts(currentSoulHearts)
-            end
-        end
-        
-        if player:GetNumCoins() < ItemVariables.MYSTERIOUS_MUSTACHE.CoinCount and game:GetRoom():GetType() == RoomType.ROOM_SHOP and rng:RandomInt(100) == 1 then
-            player:AddCoins(ItemVariables.MYSTERIOUS_MUSTACHE.CoinCount - player:GetNumCoins())
-        end
-    elseif ItemVariables.MYSTERIOUS_MUSTACHE.HasMysteriousMoustache then
-        ItemVariables.MYSTERIOUS_MUSTACHE.HasMysteriousMoustache = false
-        player:TryRemoveNullCostume(CostumeId.MYSTERIOUS_MUSTACHE)
-    end
-    
-    ItemVariables.MYSTERIOUS_MUSTACHE.ItemCount = player:GetCollectibleCount()
-    ItemVariables.MYSTERIOUS_MUSTACHE.CoinCount = player:GetNumCoins()
-end
-  
-Exodus:AddCallback(ModCallbacks.MC_POST_UPDATE, Exodus.mysteriousMustacheUpdate)
-
 --<<<WRATH OF THE LAMB>>>--
 function Exodus:wotlUse()
     local player = Isaac.GetPlayer(0)
@@ -3860,48 +3824,6 @@ function Exodus:unholyMantleNewFloor()
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, Exodus.unholyMantleNewFloor)
-
---<<<PAPER CUT>>>--
-function Exodus:paperCutCostume()
-    local player = Isaac.GetPlayer(0)
-    
-    if player:HasCollectible(ItemId.PAPER_CUT) then
-        if not ItemVariables.PAPER_CUT.HasPaperCut then
-            player:AddNullCostume(CostumeId.PAPER_CUT)
-            ItemVariables.PAPER_CUT.HasPaperCut = true
-            Isaac.Spawn(5, 300, 0, Isaac.GetFreeNearPosition(player.Position, 50), Vector(0, 0), nil)
-        end
-    elseif ItemVariables.UNHOLY_MANTLE.HasUnholyMantle then
-        ItemVariables.UNHOLY_MANTLE.HasUnholyMantle = false
-        player:TryRemoveNullCostume(CostumeId.PAPER_CUT)
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_POST_UPDATE, Exodus.paperCutCostume)
-
-function Exodus:paperCutCardUse()
-    local player = Isaac.GetPlayer(0)
-    
-    if player:HasCollectible(ItemId.PAPER_CUT) then
-        for i, entity in pairs(Isaac.GetRoomEntities()) do
-            if entity:IsVulnerableEnemy() then
-                if player:HasCollectible(CollectibleType.COLLECTIBLE_TAROT_CLOTH) then
-                    entity:AddEntityFlags(EntityFlag.FLAG_BLEED_OUT)
-                    entity:TakeDamage(20, 0, EntityRef(player), 0)
-                else
-                    entity:AddEntityFlags(EntityFlag.FLAG_BLEED_OUT)
-                    entity:TakeDamage(10, 0, EntityRef(player), 0)
-                end
-            end
-            
-            if entity.Type == EntityType.ENTITY_STONEY then
-                entity:Kill()
-            end
-        end
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_USE_CARD, Exodus.paperCutCardUse)
 
 --<<<THE PSEUDOBULBAR EFFECT>>>--
 function Exodus:FireTurretBullet(pos, vel, spawner)

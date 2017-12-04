@@ -285,10 +285,8 @@ function Exodus.newGame(fromSave)
             SAD_TEARS = { HasSadTears = false },
             UNHOLY_MANTLE = { HasUnholyMantle = false, HasEffect = true },
             TECH_360 = { HasTech360 = false },
-            PAPER_CUT = { HasPaperCut = false },
             RITUAL_CANDLE = { LitCandles = 0, HasBonus = false, Pentagram = nil, SoundPlayed = false },
             PIG_BLOOD = { HasPigBlood = false },
-            MYSTERIOUS_MUSTACHE = { HasMysteriousMustache = false, ItemCount = 0, CoinCount = 0 },
             WELCOME_MAT = { HasWelcomeMat = false, Position = NullVector, Direction = 0, CloseToMat = false, Placed = true, AppearFrame = nil },
             ASTRO_BABY = { UsedBox = 0 },
             ROBOBABY_360 = { UsedBox = 0 },
@@ -467,7 +465,8 @@ local ExodusCalls = {
     [ModCallbacks.MC_NPC_UPDATE] = {},
     [ModCallbacks.MC_POST_NPC_INIT] = {},
 	[ModCallbacks.MC_POST_TEAR_INIT] = {},
-	[ModCallbacks.MC_PRE_PICKUP_COLLISION] = {}
+	[ModCallbacks.MC_PRE_PICKUP_COLLISION] = {},
+    [ModCallbacks.MC_USE_CARD] = {}
 }
 
 --[[ (Public)
@@ -719,6 +718,20 @@ function Exodus:PrePickupCollision(pickup, collider, low)
 end
 
 Exodus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, Exodus.PrePickupCollision)
+
+--[[ (Private)
+   Runs all functions attaches using an MC_USE_CARD callback
+   Allows the passing of a Card ID to the callback to prevent unnecessary function calls
+]]
+function Exodus:UseCard(card)
+    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_USE_CARD]) do
+        if not functionTable.Parameters or functionTable.Parameters == card then
+            functionTable.FunctionRef(card)
+        end
+    end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_USE_CARD, Exodus.UseCard)
 
 -------------------
 --<<<REQUIRING>>>--
