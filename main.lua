@@ -24,6 +24,7 @@ pExodus.PlayerCount = 0
 
 -- Champion flag values, used for champion filtering on custom entities (Public)
 pExodus.ChampionFlag = {
+    NONE = 0,
     RED = 1,
     YELLOW = 1<<1,
     GREEN = 1<<2,
@@ -47,43 +48,21 @@ pExodus.ChampionFlag = {
     PULSING_RED = 1<<20,
     PULSATING = 1<<21,
     CROWN = 1<<22,
-    SKULL = 1<<23
+    SKULL = 1<<23,
+    ALL = 1<<24
 }
 
 -- The Item IDs of every item added by the mod (Public)
 pExodus.ItemId = {
     ---<<PASSIVES>>---
-    BEEHIVE = Isaac.GetItemIdByName("Beehive"),
-    SAD_TEARS = Isaac.GetItemIdByName("Sad Tears"),
-    BUSTED_PIPE = Isaac.GetItemIdByName("Busted Pipe"),
     UNHOLY_MANTLE = Isaac.GetItemIdByName("Unholy Mantle"),
-    TECH_360 = Isaac.GetItemIdByName("Tech 360"),
-    PAPER_CUT = Isaac.GetItemIdByName("Paper Cut"),
-    FORGET_ME_LATER = Isaac.GetItemIdByName("Forget Me Later"),
-    DRAGON_BREATH = Isaac.GetItemIdByName("Dragon Breath"),
-    COBALT_NECKLACE = Isaac.GetItemIdByName("Cobalt Necklace"),
-    PIG_BLOOD = Isaac.GetItemIdByName("Pig Blood"),
-    DADS_BOOTS = Isaac.GetItemIdByName("Dad's Boots"),
-    MYSTERIOUS_MUSTACHE = Isaac.GetItemIdByName("Mysterious Mustache"),
-    CURSED_METRONOME = Isaac.GetItemIdByName("Cursed Metronome"),
-    BIG_SCISSORS = Isaac.GetItemIdByName("Big Scissors"),
     WELCOME_MAT = Isaac.GetItemIdByName("Welcome Mat"),
-    GLUTTONYS_STOMACH = Isaac.GetItemIdByName("Gluttony's Stomach"),
-    POSSESSED_BOMBS = Isaac.GetItemIdByName("Possessed Bombs"),
-    BUTTROT = Isaac.GetItemIdByName("Buttrot"),
-    SLING = Isaac.GetItemIdByName("Sling"),
     YIN = Isaac.GetItemIdByName("Yin"),
     YANG = Isaac.GetItemIdByName("Yang"),
-    DEJA_VU = Isaac.GetItemIdByName("Deja Vu"),
-    FOOLS_GOLD = Isaac.GetItemIdByName("Fool's Gold"),
-    MAKEUP_REMOVER = Isaac.GetItemIdByName("Makeup Remover"),
-    ARCADE_TOKEN = Isaac.GetItemIdByName("Arcade Token"),
-    HAND_OF_GREED = Isaac.GetItemIdByName("Hand of Greed"),
     CLOCK_PIECE_1 = Isaac.GetItemIdByName("Clock Piece 1"),
     CLOCK_PIECE_2 = Isaac.GetItemIdByName("Clock Piece 2"),
     CLOCK_PIECE_3 = Isaac.GetItemIdByName("Clock Piece 3"),
     CLOCK_PIECE_4 = Isaac.GetItemIdByName("Clock Piece 4"),
-    THE_APOCRYPHON = Isaac.GetItemIdByName("The Apocryphon"),
     
     ---<<ACTIVES>>---
     FORBIDDEN_FRUIT = Isaac.GetItemIdByName("The Forbidden Fruit"),
@@ -94,14 +73,12 @@ pExodus.ItemId = {
     PSEUDOBULBAR_AFFECT = Isaac.GetItemIdByName("The Pseudobulbar Affect"),
     MUTANT_CLOVER = Isaac.GetItemIdByName("Mutant Clover"),
     TRAGIC_MUSHROOM = Isaac.GetItemIdByName("Tragic Mushroom"),
-    ANAMNESIS = Isaac.GetItemIdByName("Anamnesis"),
     HURDLE_HEELS = Isaac.GetItemIdByName("Hurdle Heels"),
     FULLERS_CLUB = Isaac.GetItemIdByName("Fuller's Club"),
     
     ---<<FAMILIARS>>---
     HUNGRY_HIPPO = Isaac.GetItemIdByName("Hungry Hippo"),
     RITUAL_CANDLE = Isaac.GetItemIdByName("Ritual Candle"),
-    ASTRO_BABY = Isaac.GetItemIdByName("Astro Baby"),
     LIL_RUNE = Isaac.GetItemIdByName("Lil Rune"),
     SUNDIAL = Isaac.GetItemIdByName("Sundial"),
     ROBOBABY_360 = Isaac.GetItemIdByName("Robo-Baby 3.6.0"),
@@ -111,7 +88,6 @@ pExodus.ItemId = {
     BURLAP_SACK = Isaac.GetTrinketIdByName("Burlap Sack"),
     PET_ROCK = Isaac.GetTrinketIdByName("Pet Rock"),
     ROTTEN_PENNY = Isaac.GetTrinketIdByName("Rotten Penny"),
-    BLUE_MOON = Isaac.GetTrinketIdByName("Blue Moon"),
     BROKEN_GLASSES = Isaac.GetTrinketIdByName("Broken Glasses"),
     BOMBS_SOUL = Isaac.GetTrinketIdByName("Bomb's Soul"),
     CLAUSTROPHOBIA = Isaac.GetTrinketIdByName("Claustrophobia"),
@@ -123,85 +99,80 @@ pExodus.ItemId = {
 ----------------------------
 
 -- Generic function used to easy get all used entity values by name (Private)
-local function getEntity(stringName, intSubtype)
-    if intSubtype == nil then 
-        intSubtype = 0 
-    end
-    
+function pExodus.GetEntity(stringName)
     return { id = Isaac.GetEntityTypeByName(stringName), variant = Isaac.GetEntityVariantByName(stringName), subtype = Isaac.GetCardIdByName(stringName), name = stringName }
 end
 
 -- The Type, Variant and SubType of every entity added by the mod (Public)
 pExodus.Entities = {
     ---<<EFFECTS>>---
-    HONEY_SPLAT = getEntity("Honey Splat"),
-    HONEY_POOF = getEntity("Honey Poof"),
-    SCORE_DISPLAY = getEntity("Score Display"),
-    CHARGE_BAR = getEntity("Charge Bar"),
-    PENTAGRAM = getEntity("Pentagram"),
-    SUMMONING_MARK = getEntity("Summoning Mark"),
-    LANTERN_GIBS = getEntity("Lantern Gibs"),
-    LANTERN_FIRE = getEntity("Lantern Fire"),
-    PORTAL_DOOR = getEntity("Portal Door"),
-    BASEBALL_HIT = getEntity("Baseball Hit"),
-    IRON_LUNG_GAS = getEntity("Iron Lung Gas"),
-    OCCULTIST_TEAR_MARKER = getEntity("Occultist Tear Marker"),
-    PART_UP = getEntity("Part Up"),
-    PART_UP_UP = getEntity("Part Up Up"),
-    PART_UP_UP_UP = getEntity("Part Up Up Up"),
-    PIT_GIBS = getEntity("Pit Gibs"),
-    BLIGHT_SPLASH = getEntity("Blight Splash"),
-    BLIGHT_STATUS_EFFECT = getEntity("Blight Status Effect"),
-    HURDLE_JUMP = getEntity("Hurdle Jump"),
+    HONEY_SPLAT = pExodus.GetEntity("Honey Splat"),
+    HONEY_POOF = pExodus.GetEntity("Honey Poof"),
+    SCORE_DISPLAY = pExodus.GetEntity("Score Display"),
+    CHARGE_BAR = pExodus.GetEntity("Charge Bar"),
+    PENTAGRAM = pExodus.GetEntity("Pentagram"),
+    SUMMONING_MARK = pExodus.GetEntity("Summoning Mark"),
+    LANTERN_GIBS = pExodus.GetEntity("Lantern Gibs"),
+    LANTERN_FIRE = pExodus.GetEntity("Lantern Fire"),
+    PORTAL_DOOR = pExodus.GetEntity("Portal Door"),
+    BASEBALL_HIT = pExodus.GetEntity("Baseball Hit"),
+    IRON_LUNG_GAS = pExodus.GetEntity("Iron Lung Gas"),
+    OCCULTIST_TEAR_MARKER = pExodus.GetEntity("Occultist Tear Marker"),
+    PART_UP = pExodus.GetEntity("Part Up"),
+    PART_UP_UP = pExodus.GetEntity("Part Up Up"),
+    PART_UP_UP_UP = pExodus.GetEntity("Part Up Up Up"),
+    PIT_GIBS = pExodus.GetEntity("Pit Gibs"),
+    BLIGHT_SPLASH = pExodus.GetEntity("Blight Splash"),
+    BLIGHT_STATUS_EFFECT = pExodus.GetEntity("Blight Status Effect"),
+    HURDLE_JUMP = pExodus.GetEntity("Hurdle Jump"),
     
     ---<<FAMILIARS>>---
-    HUNGRY_HIPPO = getEntity("Hungry Hippo"),
-    CANDLE = getEntity("Candle"),
-    ASTRO_BABY = getEntity("Astro Baby"),
-    LIL_RUNE = getEntity("Lil Rune"),
-    SUN = getEntity("Sundial Sun"),
-    SHADOW = getEntity("Sundial Shadow"),
-    ROBOBABY_360 = getEntity("Robobaby 3.6.0"),
+    HUNGRY_HIPPO = pExodus.GetEntity("Hungry Hippo"),
+    CANDLE = pExodus.GetEntity("Candle"),
+    LIL_RUNE = pExodus.GetEntity("Lil Rune"),
+    SUN = pExodus.GetEntity("Sundial Sun"),
+    SHADOW = pExodus.GetEntity("Sundial Shadow"),
+    ROBOBABY_360 = pExodus.GetEntity("Robobaby 3.6.0"),
     
     ---<<ENEMIES>>---
-    POISON_MASTERMIND = getEntity("Poison Mastermind"),
-    POISON_HEMISPHERE = getEntity("Poison Hemisphere"),
-    DANK_DIP = getEntity("Dank Dip"),
-    DROWNED_SHROOMMAN = getEntity("Drowned Mushroom"),
-    SCARY_SHROOMMAN = getEntity("Scary Shroomman"),
-    BLOCKAGE = getEntity("Blockage"),
-    CLOSTER = getEntity("Closter"),
-    FLYERBALL = getEntity("Flyerball"),
-    IRON_LUNG = getEntity("Iron Lung"),
-    OCCULTIST = getEntity("Occultist"),
-    HALFBLIND = getEntity("Halfblind"),
-    HEADCASE = getEntity("Headcase"),
-    HOLLOWHEAD = getEntity("Hollowhead"),
-    WOMBSHROOM = getEntity("Wombshroom"),
-    CARRION_PRINCE = getEntity("Carrion Prince"),
-    LITHOPEDION = getEntity("Lithopedion"),
-    DEATHS_EYE = getEntity("Death's Eye"),
-    FLESH_DEATHS_EYE = getEntity("Flesh Death's Eye"),
-    LOVELY_FLY = getEntity("Lovely Fly"),
-    SOULFUL_FLY = getEntity("Soulful Fly"),
-    HATEFUL_FLY = getEntity("Hateful Fly"),
-    HATEFUL_FLY_GHOST = getEntity("Hateful Fly Ghost"),
-    HOTHEAD = getEntity("Hothead"),
-    WINGLEADER = getEntity("Wingleader"),
-    BROOD = getEntity("Brood"),
-    PATRIARCH = getEntity("Patriarch"),
+    POISON_MASTERMIND = pExodus.GetEntity("Poison Mastermind"),
+    POISON_HEMISPHERE = pExodus.GetEntity("Poison Hemisphere"),
+    DANK_DIP = pExodus.GetEntity("Dank Dip"),
+    DROWNED_SHROOMMAN = pExodus.GetEntity("Drowned Mushroom"),
+    SCARY_SHROOMMAN = pExodus.GetEntity("Scary Shroomman"),
+    BLOCKAGE = pExodus.GetEntity("Blockage"),
+    CLOSTER = pExodus.GetEntity("Closter"),
+    FLYERBALL = pExodus.GetEntity("Flyerball"),
+    IRON_LUNG = pExodus.GetEntity("Iron Lung"),
+    OCCULTIST = pExodus.GetEntity("Occultist"),
+    HALFBLIND = pExodus.GetEntity("Halfblind"),
+    HEADCASE = pExodus.GetEntity("Headcase"),
+    HOLLOWHEAD = pExodus.GetEntity("Hollowhead"),
+    WOMBSHROOM = pExodus.GetEntity("Wombshroom"),
+    CARRION_PRINCE = pExodus.GetEntity("Carrion Prince"),
+    LITHOPEDION = pExodus.GetEntity("Lithopedion"),
+    DEATHS_EYE = pExodus.GetEntity("Death's Eye"),
+    FLESH_DEATHS_EYE = pExodus.GetEntity("Flesh Death's Eye"),
+    LOVELY_FLY = pExodus.GetEntity("Lovely Fly"),
+    SOULFUL_FLY = pExodus.GetEntity("Soulful Fly"),
+    HATEFUL_FLY = pExodus.GetEntity("Hateful Fly"),
+    HATEFUL_FLY_GHOST = pExodus.GetEntity("Hateful Fly Ghost"),
+    HOTHEAD = pExodus.GetEntity("Hothead"),
+    WINGLEADER = pExodus.GetEntity("Wingleader"),
+    BROOD = pExodus.GetEntity("Brood"),
+    PATRIARCH = pExodus.GetEntity("Patriarch"),
     
     ---<<OTHERS>>---
-    BIRDBATH = getEntity("Birdbath"),
-    LANTERN_TEAR = getEntity("Lantern Tear"),
-    BASEBALL = getEntity("Baseball"),
-    SCARED_HEART = getEntity("Exodus Scared Heart"),
-    WELCOME_MAT = getEntity("Welcome Mat"),
-    KEYHOLE = getEntity("Keyhole"),
-    CLOCK_KEEPER = getEntity("Clock Keeper"),
-    FIREBALL = getEntity("Fireball"),
-    FIREBALL_2 = getEntity("Fireball 2"),
-    BLIGHT_TEAR = getEntity("Blight Tear")
+    BIRDBATH = pExodus.GetEntity("Birdbath"),
+    LANTERN_TEAR = pExodus.GetEntity("Lantern Tear"),
+    BASEBALL = pExodus.GetEntity("Baseball"),
+    SCARED_HEART = pExodus.GetEntity("Exodus Scared Heart"),
+    WELCOME_MAT = pExodus.GetEntity("Welcome Mat"),
+    KEYHOLE = pExodus.GetEntity("Keyhole"),
+    CLOCK_KEEPER = pExodus.GetEntity("Clock Keeper"),
+    FIREBALL = pExodus.GetEntity("Fireball"),
+    FIREBALL_2 = pExodus.GetEntity("Fireball 2"),
+    BLIGHT_TEAR = pExodus.GetEntity("Blight Tear")
 }
 
 -- Error checking for entities to alert the developer to a mistyped name
@@ -228,26 +199,7 @@ pExodus.Characters = {
 
 -- The Costume IDs of every costume used by the mod (Public)
 pExodus.CostumeId = {
-    BEEHIVE = Isaac.GetCostumeIdByPath("gfx/characters/costume_Beehive.anm2"),
-    SAD_TEARS = Isaac.GetCostumeIdByPath("gfx/characters/costume_Sad Tears.anm2"),
-    BUSTED_PIPE = Isaac.GetCostumeIdByPath("gfx/characters/costume_Busted Pipe.anm2"),
     UNHOLY_MANTLE = Isaac.GetCostumeIdByPath("gfx/characters/costume_Unholy Mantle.anm2"),
-    TECH_360 = Isaac.GetCostumeIdByPath("gfx/characters/costume_TechY.anm2"),
-    PAPER_CUT = Isaac.GetCostumeIdByPath("gfx/characters/costume_Paper Cut.anm2"),
-    DRAGON_BREATH = Isaac.GetCostumeIdByPath("gfx/characters/costume_Dragon Breath.anm2"),
-    PIG_BLOOD = Isaac.GetCostumeIdByPath("gfx/characters/costume_Pig Blood.anm2"),
-    DADS_BOOTS = Isaac.GetCostumeIdByPath("gfx/characters/costume_Dad's Boots.anm2"),
-    CURSED_METRONOME = Isaac.GetCostumeIdByPath("gfx/characters/costume_Cursed Metronome.anm2"),
-    MYSTERIOUS_MUSTACHE = Isaac.GetCostumeIdByPath("gfx/characters/costume_Mysterious Mustache.anm2"),
-    POSSESSED_BOMBS = Isaac.GetCostumeIdByPath("gfx/characters/costume_Possessed Bombs.anm2"),
-    BUTTROT = Isaac.GetCostumeIdByPath("gfx/characters/costume_Buttrot.anm2"),
-    KEEPER_HAND_OF_GREED = Isaac.GetCostumeIdByPath("gfx/characters/costume_Keeper Hand of Greed.anm2"),
-    HAND_OF_GREED = Isaac.GetCostumeIdByPath("gfx/characters/costume_Hand of Greed.anm2"),
-    MAKEUP_REMOVER = Isaac.GetCostumeIdByPath("gfx/characters/costume_MakeupRemover.anm2"),
-    MAKEUP_REMOVER_BLACK = Isaac.GetCostumeIdByPath("gfx/characters/costume_MakeupRemover_black.anm2"),
-    MAKEUP_REMOVER_BLUE = Isaac.GetCostumeIdByPath("gfx/characters/costume_MakeupRemover_blue.anm2"),
-    MAKEUP_REMOVER_GRAY = Isaac.GetCostumeIdByPath("gfx/characters/costume_MakeupRemover_grey.anm2"),
-    MAKEUP_REMOVER_WHITE = Isaac.GetCostumeIdByPath("gfx/characters/costume_MakeupRemover_white.anm2")
 }
 
 -------------------------------------
@@ -282,23 +234,18 @@ function Exodus.newGame(fromSave)
     if not fromSave then
         pExodus.ItemVariables = {
             ---<<PASSIVES>>---
-            SAD_TEARS = { HasSadTears = false },
             UNHOLY_MANTLE = { HasUnholyMantle = false, HasEffect = true },
             TECH_360 = { HasTech360 = false },
             RITUAL_CANDLE = { LitCandles = 0, HasBonus = false, Pentagram = nil, SoundPlayed = false },
-            PIG_BLOOD = { HasPigBlood = false },
             WELCOME_MAT = { HasWelcomeMat = false, Position = NullVector, Direction = 0, CloseToMat = false, Placed = true, AppearFrame = nil },
-            ASTRO_BABY = { UsedBox = 0 },
-            ROBOBABY_360 = { UsedBox = 0 },
-            LIL_RUNE = { HasLilRune = false, UsedBox = 0, State = "Purple", RuneType = 0 },
+            LIL_RUNE = { HasLilRune = false, State = "Purple", RuneType = 0 },
             POSSESSED_BOMBS = { HasPossessedBombs = false },
             MOLDY_BREAD = { GotFlies = false },
             CLAUSTROPHOBIA = { Triggered = false },
             ROTTEN_PENNY = { HasQuarter = false, HasDollar = false },
-            SLING = { Icon = Sprite() },
             HOLY_WATER = { Splashed = false },
             FOOLS_GOLD = { HasFoolsGold = false },
-            THE_APOCRYPHON = { HasBeenToAngel = false, ChangeBack = false, ApocDamage = 0, ApocTearDelay = 0, ApocSpeed = 0, ApocLuck = 0, ApocShotSpeed = 0, ApocRange = 0 },
+            THE_APOCRYPHON = { HasBeenToAngel = false, ChangeBack = false },
             BROKEN_GLASSES = { Broke = false },
             
             ---<<ACTIVES>>---
@@ -334,7 +281,6 @@ function Exodus.newGame(fromSave)
                     { EntityType.ENTITY_MOMS_HEART, EntityType.ENTITY_SATAN, EntityType.ENTITY_ISAAC }
                 }
             },
-            ANAMNESIS = { IsHolding = false, Charge = 0 },
             
             ---<<MISCELLANEOUS>>--
             CHARGE_BAR = { Bar = Sprite(), Scale = Vector(1, 1) },
@@ -346,9 +292,6 @@ function Exodus.newGame(fromSave)
         -- Pre-start variable handling that could not be done in the table declaration
         pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Load("gfx/effects/Pseudobulbar Icon.anm2", true)
         pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Play("Idle", true)
-        
-        pExodus.ItemVariables.SLING.Icon:Load("gfx/effects/Sling_marker_effect.anm2", true)
-        pExodus.ItemVariables.SLING.Icon:Play("Idle", true)
 
         pExodus.ItemVariables.HURDLE_HEELS.Icon:Load("gfx/effects/Jump.anm2", true)
         pExodus.ItemVariables.HURDLE_HEELS.Icon:Play("Idle", true)
@@ -416,6 +359,48 @@ function pExodus:AddItemCostume(item, costume)
 	table.insert(ItemCostumes, { HasCostume = { false, false, false, false }, ItemId = item, CostumeId = costume })
 end
 
+-- Allows developers to set a familiar variant to be checked on a familiar cache update
+local FamiliarCaches = {}
+local BoxOfFriendsUses = {}
+
+function pExodus:SetupFamiliar(variant, itemId)
+    table.insert(FamiliarCaches, { Variant = variant, ItemId = itemId })
+end
+
+local function HandleExcessFamiliars(familiar, itemId)
+    local player = familiar.Player
+    local ePlayer = pExodus.GetExodusPlayerByRef(player)
+    local count = 1
+    local expectedCount = player:GetCollectibleNum(itemId)
+    
+    if expectedCount > 0 and BoxOfFriendsUses[ePlayer.index] then
+        expectedCount = expectedCount + BoxOfFriendsUses[ePlayer.index]
+    end
+    
+    for i, ent in pairs(pExodus.RoomEntities) do
+        local fam = ent:ToFamiliar()
+        
+        if fam and fam.Player.Index == player.Index and fam.Variant == familiar.Variant then
+            if count < expectedCount then
+                count = count + 1
+            elseif count >= expectedCount then
+                ent:Remove()
+            end
+        end
+    end
+    
+    if count > expectedCount then
+        familiar:Remove()
+    end
+end
+
+-- Allows developer to setup an entity and limit its potential champion variants
+local EntitiesToFilter = {}
+
+function pExodus:SetupEntity(eTable, flags)
+    table.insert(EntitiesToFilter, { EntityTable = eTable, ChampionFlags = flags })
+end
+
 -- Defining custom Exodus callbacks to make it easier to achieve certain functionalities (Public)
 pExodus.ExodusCallbacks = {
 	MC_ADD_COLLECTIBLE = 0,
@@ -453,36 +438,26 @@ function pExodus:AddCustomCallback(callback, func, params)
 end
 
 -- Stores all function and parameters to use with the existing callbacks (Private)
-local ExodusCalls = {
-	[ModCallbacks.MC_POST_GAME_STARTED] = {},
-    [ModCallbacks.MC_POST_UPDATE] = {},
-    [ModCallbacks.MC_POST_RENDER] = {},
-    [ModCallbacks.MC_POST_NEW_ROOM] = {},
-    [ModCallbacks.MC_POST_NEW_LEVEL] = {},
-    [ModCallbacks.MC_ENTITY_TAKE_DMG] = {},
-    [ModCallbacks.MC_EVALUATE_CACHE] = {},
-    [ModCallbacks.MC_POST_FIRE_TEAR] = {},
-    [ModCallbacks.MC_NPC_UPDATE] = {},
-    [ModCallbacks.MC_POST_NPC_INIT] = {},
-	[ModCallbacks.MC_POST_TEAR_INIT] = {},
-	[ModCallbacks.MC_PRE_PICKUP_COLLISION] = {},
-    [ModCallbacks.MC_USE_CARD] = {}
-}
+local ExodusCalls = {}
 
 --[[ (Public)
    Handles the setting up of existing callbacks to streamline development and increase mod efficiency 
    Some callbacks will only take zero to one arguments passed to the callback as a single value (Example: 5)
    Some callbacks will take multiple arguments that must always be passed in as a table regardless of how many arguments are being used (Example: { 5, 2, 3 })
 ]]
-function pExodus:AddModCallback(callback, func, params)
-    table.insert(ExodusCalls[callback], { FunctionRef = func, Parameters = params })
+function pExodus:AddCallback(callback, func, params)
+    if ExodusCalls[callback] == nil then
+        ExodusCalls[callback] = { { FunctionRef = func, Parameters = params } }
+    else
+        table.insert(ExodusCalls[callback], { FunctionRef = func, Parameters = params })
+    end
 end
 
 -- Runs all functions attached using an MC_POST_GAME_STARTED callback (Private)
 function Exodus:PostGameStarted(fromSave)
     GetPlayers()
 	Exodus.newGame(fromSave)
-
+    
 	for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_GAME_STARTED]) do
 		if not functionTable.Parameters or functionTable.Parameters[1] == fromSave then
 			functionTable.FunctionRef(fromSave)
@@ -500,6 +475,8 @@ Exodus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Exodus.PostGameStarted)
 ]]
 function Exodus:PostUpdate()
     GetPlayers()
+    
+    pExodus.RoomEntities = Isaac.GetRoomEntities()
     
 	for pIndex = 1, pExodus.PlayerCount do
         local exodusPlayer = pExodus.Players[pIndex]
@@ -598,6 +575,9 @@ function Exodus:PostNewRoom()
     
     local room = pExodus.Game:GetRoom()
     pExodus.Room = room
+    pExodus.RoomEntities = Isaac.GetRoomEntities()
+    
+    BoxOfFriendsUses = {}
     
     for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_NEW_ROOM]) do
         functionTable.FunctionRef(room)
@@ -621,15 +601,23 @@ function Exodus:PostNewLevel()
     end
 end
 
-Exodus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Exodus.PostNewLevel)
+Exodus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, Exodus.PostNewLevel)
 
 --[[ (Private)
    Runs all functions attached using an MC_EVALUATE_CACHE callback
    Allows the passing of a bitmask of cache flags to the callback to prevent unnecessary function calls
 ]]
 function Exodus:EvaluateCache(player, cacheFlag)
+    if cacheFlag == CacheFlag.CACHE_FAMILIARS then
+        for i, familiar in ipairs(FamiliarCaches) do
+            if player:HasCollectible(familiar.ItemId) then
+                player:CheckFamiliar(familiar.Variant, player:GetCollectibleNum(familiar.ItemId) + (BoxOfFriendsUses[pExodus.GetExodusPlayerByRef(player).index] or 0), pExodus.RNG)
+            end
+        end
+    end
+    
     for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_EVALUATE_CACHE]) do
-        if functionTable.Parameters == nil or functionTable.Parameters & cacheFlag == cacheFlag then
+        if not functionTable.Parameters or functionTable.Parameters & cacheFlag == cacheFlag then
             functionTable.FunctionRef(player, cacheFlag)
         end
     end
@@ -656,17 +644,35 @@ end
 Exodus:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, Exodus.PostTearInit)
 
 --[[ (Private)
+   Runs all functions attached using an MC_PRE_TEAR_COLLISION callback
+   Allows the passing of a Variant and SubType to the callback (in that order) to streamline development and prevent unnecessary function calls
+]]
+function Exodus:PreTearCollision(tear, collider, low)
+	for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_PRE_TEAR_COLLISION]) do
+		local returnVal = functionTable.FunctionRef(tear, collider, low)
+        
+		if returnVal ~= nil then
+			return returnVal
+		end
+    end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_PRE_TEAR_COLLISION, Exodus.PreTearCollision)
+
+--[[ (Private)
    Runs all functions attached using an MC_NPC_UPDATE callback
    Allows the passing of a Type, Variant and SubType to the callback (in that order) to streamline development and prevent unnecessary function calls
 ]]
 function Exodus:NpcUpdate(npc)
+    local data = npc:GetData()
+    
     for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_NPC_UPDATE]) do
 		if not functionTable.Parameters then
 			functionTable.FunctionRef(npc)
         elseif functionTable.Parameters[1] == npc.Type then
             if not functionTable.Parameters[2] or functionTable.Parameters[2] == npc.Variant then
                 if not functionTable.Parameters[3] or functionTable.Parameters[3] == npc.SubType then
-                    functionTable.FunctionRef(npc)
+                    functionTable.FunctionRef(npc, data)
                 end
             end
         end
@@ -680,6 +686,16 @@ Exodus:AddCallback(ModCallbacks.MC_NPC_UPDATE, Exodus.NpcUpdate)
    Allows the passing of a Type, Variant and SubType to the callback (in that order) to streamline development and prevent unnecessary function calls
 ]]
 function Exodus:PostNpcInit(npc)
+    for i, entity in ipairs(EntitiesToFilter) do
+        local eTable = entity.EntityTable
+        
+        if npc.Type == eTable.id and npc.Variant == eTable.variant then
+            if ((1<<npc:GetChampionColorIdx()) & entity.ChampionFlags) > 0 then
+                npc:Morph(npc.id, npc.variant, npc.subtype, -1)
+            end
+        end
+    end
+    
     for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_NPC_INIT]) do
 		if not functionTable.Parameters then
 			functionTable.FunctionRef(npc)
@@ -720,7 +736,7 @@ end
 Exodus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, Exodus.PrePickupCollision)
 
 --[[ (Private)
-   Runs all functions attaches using an MC_USE_CARD callback
+   Runs all functions attached using an MC_USE_CARD callback
    Allows the passing of a Card ID to the callback to prevent unnecessary function calls
 ]]
 function Exodus:UseCard(card)
@@ -733,12 +749,85 @@ end
 
 Exodus:AddCallback(ModCallbacks.MC_USE_CARD, Exodus.UseCard)
 
+--[[ (Private)
+    Runs all functions attached using an MC_USE_ITEM callback
+    Allows the passing of an Item ID to the callback to prevent unnecessary function calls
+    Passes the player into the function reference to assist with player based item usage
+]]
+function Exodus:UseItem(collectibleType, itemRng)
+    if collectibleType == CollectibleType.COLLECTIBLE_BOX_OF_FRIENDS then
+        for pIndex = 1, pExodus.PlayerCount do
+            local player = pExodus.Players[pIndex]
+            
+            if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.ref.ControllerIndex) > 0.0 and not player.ref:NeedsCharge() then
+                if not BoxOfFriendsUses[player.index] then
+                    BoxOfFriendsUses[player.index] = 1
+                else
+                    BoxOfFriendsUses[player.index] = BoxOfFriendsUses[player.index] + 1
+                end
+            end
+        end
+    end
+    
+    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_USE_ITEM]) do
+        if not functionTable.Parameters or functionTable.Parameters == collectibleType then
+            for pIndex = 1, pExodus.PlayerCount do
+                local player = pExodus.Players[pIndex]
+                
+                if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.index - 1) > 0.0 and not player.ref:NeedsCharge() then
+                    functionTable.FunctionRef(player.ref, collectibleType, itemRng)
+                end
+            end
+        end
+    end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_USE_ITEM, Exodus.UseItem)
+
+--[[ (Private)
+    Runs all functions attached using an MC_FAMILIAR_INIT callback
+    Allows the passing of a Variant to the callback to prevent unnecessary function calls
+]]
+function Exodus:FamiliarInit(familiar)
+    if familiar.Variant == FamiliarVariant.DEMON_BABY then
+        HandleExcessFamiliars(familiar, CollectibleType.COLLECTIBLE_DEMON_BABY)
+    end
+    
+    for i, fam in ipairs(FamiliarCaches) do
+        if familiar.Variant == fam.Variant then
+            HandleExcessFamiliars(familiar, fam.ItemId)
+        end
+    end
+    
+    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_FAMILIAR_INIT]) do
+        if not functionTable.Parameters or functionTable.Parameters == familiar.Variant then
+            functionTable.FunctionRef(familiar)
+        end
+    end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, Exodus.FamiliarInit)
+
+--[[ (Private)
+    Runs all functions attaches using an MC_FAMILIAR_UPDATE callback
+    Allows the passing of a Variant to the callback to prevent unnecessary function calls
+]]
+function Exodus:FamiliarUpdate(familiar)
+    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_FAMILIAR_UPDATE]) do
+        if not functionTable.Parameters or functionTable.Parameters == familiar.Variant then
+            functionTable.FunctionRef(familiar)
+        end
+    end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, Exodus.FamiliarUpdate)
+
 -------------------
 --<<<REQUIRING>>>--
 -------------------
 
--- All passive item Lua files that must be required
-local PassivesToRequire = {
+-- Requires all necessary passive item Lua files
+for index, item in ipairs({
     "ArcadeToken", -- DONE
     "Beehive", -- DONE
     "BigScissors", -- DONE
@@ -749,28 +838,98 @@ local PassivesToRequire = {
     "DadsBoots", -- DONE
     "DejaVu", -- DONE
     "DragonBreath", -- DONE
-    "FoolsGold",
-    "ForgetMeLater",
-    "GluttonysStomach",
-    "HandOfGreed",
-    "MakeupRemover",
-    "MysteriousMustache",
-    "PaperCut",
-    "PigBlood",
-    "PossessedBombs",
-    "SadTears",
-    "Sling",
-    "Tech360",
-    "TheApocryphon",
+    "FoolsGold", -- DONE
+    "ForgetMeLater", -- DONE
+    "GluttonysStomach", -- DONE
+    "HandOfGreed", -- DONE
+    "MakeupRemover", -- DONE
+    "MysteriousMustache", -- DONE
+    "PaperCut", -- DONE
+    "PigBlood", -- DONE
+    "PossessedBombs", -- DONE
+    "SadTears", -- DONE
+    "Sling", -- DONE
+    "Tech360", -- DONE
+    "TheApocryphon", -- DONE
     "UnholyMantle",
     "WelcomeMat",
     "Yang",
     "Yin"
-}
+}) do
+    require("scripts/passives/" .. item)
+end
 
--- Requires all necessary passive item Lua files
-for index, item in ipairs(PassivesToRequire) do
-    require("scripts/passives/item_" .. item)
+-- Requires all necessary active item Lua files
+for index, item in ipairs({
+    "Anamnesis", -- DONE
+    "BaseballMitt",
+    "Birdbath",
+    "ForbiddenFruit",
+    "FullersClub",
+    "HurdleHeels",
+    "MutantClover",
+    "OminousLantern",
+    "PseudobulbarAffect",
+    "TragicMushroom",
+    "WrathOfTheLamb"
+}) do
+    require("scripts/actives/" .. item)
+end
+
+-- Requires all necessary trinket Lua files
+for index, trinket in ipairs({
+    "BlueMoon", -- DONE
+    "BombsSoul",
+    "BrokenGlasses",
+    "BurlapSack",
+    "Claustrophobia",
+    "Flyder",
+    "GridWorm",
+    "PetRock",
+    "RottenPenny"
+}) do
+    require("scripts/trinkets/" .. trinket)
+end
+
+-- Requires all necessary familiar Lua files
+for index, familiar in ipairs({
+    "AstroBaby", -- DONE
+    "HungryHippo",
+    "LilRune",
+    "RitualCandle",
+    "Robobaby360",
+    "Sundial"
+}) do
+    require("scripts/familiars/" .. familiar)
+end
+
+-- Requires all necessary enemy Lua files
+for index, enemy in ipairs({
+    "Blockage", -- DONE
+    "Brood",
+    "CarrionPrince",
+    "Closter",
+    "DankDip",
+    "DeathsEye",
+    "DrownedShroomman",
+    "FleshDeathsEye",
+    "Flyerball",
+    "Halfblind",
+    "Headcase",
+    "HeartFlies",
+    "Hollowhead",
+    "Hothead",
+    "IronLung",
+    "Lithopedion",
+    "Occultist",
+    "Patriarch",
+    "PoisonHemisphere",
+    "PoisonMastermind",
+    "ScaryShroomman",
+    "Wingleader",
+    "Wombshroom"
+}) do
+    require("scripts/enemies/" .. enemy)
 end
 
 -------------------------------
@@ -779,7 +938,7 @@ end
 
 --<<<ENTITY REGISTRATION>>>--
 function Exodus:RemoveFromRegister(entity)
-    for i=1, #GameState.Register do
+    for i = 1, #GameState.Register do
         if GameState.Register[i].Room == game:GetLevel():GetCurrentRoomIndex() 
         and GameState.Register[i].Position.X == entity.Position.X 
         and GameState.Register[i].Position.Y == entity.Position.Y
@@ -864,6 +1023,14 @@ function pExodus.CompareEntities(ent1, ent2)
     end
     
     return false
+end
+
+function pExodus.GetExodusPlayerByRef(player)
+    for i, ePlayer in ipairs(pExodus.Players) do
+        if ePlayer.ref.Index == player.Index and ePlayer.ref.InitSeed == player.InitSeed then
+            return ePlayer
+        end
+    end
 end
 
 function pExodus:PlayerIsMoving(player)
