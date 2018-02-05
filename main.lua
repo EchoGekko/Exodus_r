@@ -440,39 +440,65 @@ end
 -- Stores all function and parameters to use with the existing callbacks (Private)
 local ExodusCalls = {}
 
---[[ (Public)
-   Handles the setting up of existing callbacks to streamline development and increase mod efficiency 
-   Some callbacks will only take zero to one arguments passed to the callback as a single value (Example: 5)
-   Some callbacks will take multiple arguments that must always be passed in as a table regardless of how many arguments are being used (Example: { 5, 2, 3 })
-]]
-function pExodus:AddCallback(callback, func, params)
+function pExodus:AddCallback(callback, func, params, multiplayer)
+    local functionTable = { FunctionRef = func, Parameters = params or {}, Multiplayer = multiplayer or false }
+    
     if ExodusCalls[callback] == nil then
-        ExodusCalls[callback] = { { FunctionRef = func, Parameters = params } }
+        ExodusCalls[callback] = { functionTable }
     else
-        table.insert(ExodusCalls[callback], { FunctionRef = func, Parameters = params })
+        table.insert(ExodusCalls[callback], functionTable)
     end
 end
 
--- Runs all functions attached using an MC_POST_GAME_STARTED callback (Private)
-function Exodus:PostGameStarted(fromSave)
-    GetPlayers()
-	Exodus.newGame(fromSave)
+local function CheckParameters(callback, callbackParams, functionParams)
+    if callback == ModCallbacks.MC_EVALUATE_CACHE then
+        if callbackParams[2] == functionParams[1] then
+            return true
+        end
+    elseif callback == ModCallbacks.MC_ENTITY_TAKE_DMG then
+        if (callbackParams[1].Type == functionParams[1] or  functionParams[1]) and (callbackParams[1].Variant == functionParams[2] or not functionParams[2])
+        and (callbackParams[1].SubType == functionParams[3] or not functionParams[3]) then
+            return true
+        end
+    end
     
-	for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_GAME_STARTED]) do
-		if not functionTable.Parameters or functionTable.Parameters[1] == fromSave then
-			functionTable.FunctionRef(fromSave)
-		end
-	end
+    return false
 end
 
-Exodus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Exodus.PostGameStarted)
+function Exodus:GenericFunction(callback, ...)
+    local callbackParams = ...
+    
+    for i, functionTable in ipairs(ExodusCalls[callback]) do
+        if CheckParameters(callback, callbackParams, functionTable.Parameters) then
+            if functionTable.Multiplayer then
+                for i = 1, pExodus.PlayerCount do
+                    local params = {}
+                    table.move(callbackParams, 1, #callbackParams, 1, params)
+                    table.insert(params, pExodus.Players[i])
+                    functionTable.FunctionRef(table.unpack(params))
+                end
+            else
+                functionTable.FunctionRef(table.unpack(callbackParams))
+            end
+        end
+    end
+end
 
---[[ (Private)
-   Runs all functions attached using an MC_POST_UPDATE callback
-   Runs all functions attached using an MC_ADD_COLLECTIBLE callback
-   Runs all functions attached using an MC_REMOVE_COLLECTIBLE callback
-   Handles adding and removing of costumes tied to items using pExodus:AddItemCostume()
-]]
+for i, callback in ipairs({
+            ModCallbacks.MC_EVALUATE_CACHE,
+            ModCallbacks.MC_ENTITY_TAKE_DMG
+        }) do
+    ExodusCalls[callback] = {}
+    Exodus:AddCallback(callback, function(exodus, ...) Exodus:GenericFunction(callback, {...}) end)
+end
+
+function pExodus.damage(entity, amount, flags, source, frames, player)
+    Isaac.ConsoleOutput("Player took damage")
+end
+
+pExodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, pExodus.damage, { EntityType.ENTITY_PLAYER }, true)
+
+
 function Exodus:PostUpdate()
     GetPlayers()
     
@@ -523,53 +549,10 @@ function Exodus:PostUpdate()
             end
         end
     end
-    
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_UPDATE]) do
-        functionTable.FunctionRef()
-    end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_UPDATE, Exodus.PostUpdate)
 
--- Runs all functions attached using an MC_POST_RENDER callback (Private)
-function Exodus:PostRender()
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_RENDER]) do
-        functionTable.FunctionRef()
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_POST_RENDER, Exodus.PostRender)
-
---[[ (Private)
-   Runs all functions attached using an MC_ENTITY_TAKE_DMG callback
-   Allows the passing of a Type, Variant and SubType as arguments to the callback (in that order) to streamline development and prevent unnecessary function calls
-]]
-function Exodus:EntityTakeDamage(entity, dmgAmount, dmgFlags, dmgSource, invulnFrames)
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_ENTITY_TAKE_DMG]) do
-		local returnVal;
-        
-		if not functionTable.Parameters then
-			returnVal = functionTable.FunctionRef(entity, dmgAmount, dmgFlags, dmgSource, invulnFrames)
-		elseif entity.Type == functionTable.Parameters[1] then
-            if not functionTable.Parameters[2] or functionTable.Parameters[2] == npc.Variant then
-                if not functionTable.Parameters[3] or functionTable.Parameters[3] == npc.SubType then
-                    returnVal = functionTable.FunctionRef(entity, dmgAmount, dmgFlags, dmgSource, invulnFrames)
-                end
-            end
-        end
-        
-		if returnVal ~= nil then
-			return returnVal
-		end
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Exodus.EntityTakeDamage)
-
---[[ (Private)
-   Runs all functions attached using an MC_POST_NEW_ROOM callback
-   Passes the current room into the attached function to streamline development and prevent unnecessary function calls
-]]
 function Exodus:PostNewRoom()
     GetPlayers()
     
@@ -578,35 +561,19 @@ function Exodus:PostNewRoom()
     pExodus.RoomEntities = Isaac.GetRoomEntities()
     
     BoxOfFriendsUses = {}
-    
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_NEW_ROOM]) do
-        functionTable.FunctionRef(room)
-    end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Exodus.PostNewRoom)
 
---[[ (Private)
-   Runs all functions attached using an MC_POST_NEW_LEVEL callback
-   Passes the current level into the attached function to streamline development and prevent unnecessary function calls
-]]
 function Exodus:PostNewLevel()
     GetPlayers()
     
     local level = pExodus.Game:GetLevel()
     pExodus.Level = level
-    
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_NEW_LEVEL]) do
-        functionTable.FunctionRef(level)
-    end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, Exodus.PostNewLevel)
 
---[[ (Private)
-   Runs all functions attached using an MC_EVALUATE_CACHE callback
-   Allows the passing of a bitmask of cache flags to the callback to prevent unnecessary function calls
-]]
 function Exodus:EvaluateCache(player, cacheFlag)
     if cacheFlag == CacheFlag.CACHE_FAMILIARS then
         for i, familiar in ipairs(FamiliarCaches) do
@@ -615,76 +582,10 @@ function Exodus:EvaluateCache(player, cacheFlag)
             end
         end
     end
-    
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_EVALUATE_CACHE]) do
-        if not functionTable.Parameters or functionTable.Parameters & cacheFlag == cacheFlag then
-            functionTable.FunctionRef(player, cacheFlag)
-        end
-    end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Exodus.EvaluateCache)
 
--- Runs all functions attached using an MC_POST_FIRE_TEAR callback (Private)
-function Exodus:PostFireTear(tear)
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_FIRE_TEAR]) do
-        functionTable.FunctionRef(tear)
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_POST_FIRE_TEAR, Exodus.PostFireTear)
-
--- Runs all functions attached using an MC_POST_TEAR_INIT callback (Private)
-function Exodus:PostTearInit(tear)
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_TEAR_INIT]) do
-        functionTable.FunctionRef(tear)
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, Exodus.PostTearInit)
-
---[[ (Private)
-   Runs all functions attached using an MC_PRE_TEAR_COLLISION callback
-   Allows the passing of a Variant and SubType to the callback (in that order) to streamline development and prevent unnecessary function calls
-]]
-function Exodus:PreTearCollision(tear, collider, low)
-	for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_PRE_TEAR_COLLISION]) do
-		local returnVal = functionTable.FunctionRef(tear, collider, low)
-        
-		if returnVal ~= nil then
-			return returnVal
-		end
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_PRE_TEAR_COLLISION, Exodus.PreTearCollision)
-
---[[ (Private)
-   Runs all functions attached using an MC_NPC_UPDATE callback
-   Allows the passing of a Type, Variant and SubType to the callback (in that order) to streamline development and prevent unnecessary function calls
-]]
-function Exodus:NpcUpdate(npc)
-    local data = npc:GetData()
-    
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_NPC_UPDATE]) do
-		if not functionTable.Parameters then
-			functionTable.FunctionRef(npc)
-        elseif functionTable.Parameters[1] == npc.Type then
-            if not functionTable.Parameters[2] or functionTable.Parameters[2] == npc.Variant then
-                if not functionTable.Parameters[3] or functionTable.Parameters[3] == npc.SubType then
-                    functionTable.FunctionRef(npc, data)
-                end
-            end
-        end
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_NPC_UPDATE, Exodus.NpcUpdate)
-
---[[ (Private)
-   Runs all functions attached using an MC_POST_NPC_INIT callback
-   Allows the passing of a Type, Variant and SubType to the callback (in that order) to streamline development and prevent unnecessary function calls
-]]
 function Exodus:PostNpcInit(npc)
     for i, entity in ipairs(EntitiesToFilter) do
         local eTable = entity.EntityTable
@@ -695,65 +596,10 @@ function Exodus:PostNpcInit(npc)
             end
         end
     end
-    
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_POST_NPC_INIT]) do
-		if not functionTable.Parameters then
-			functionTable.FunctionRef(npc)
-        elseif functionTable.Parameters[1] == npc.Type then
-            if not functionTable.Parameters[2] or functionTable.Parameters[2] == npc.Variant then
-                if not functionTable.Parameters[3] or functionTable.Parameters[3] == npc.SubType then
-                    functionTable.FunctionRef(npc)
-                end
-            end
-        end
-    end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Exodus.PostNpcInit)
 
---[[ (Private)
-   Runs all functions attached using an MC_PRE_PICKUP_COLLISION callback
-   Allows the passing of a Variant and SubType to the callback (in that order) to streamline development and prevent unnecessary function calls
-]]
-function Exodus:PrePickupCollision(pickup, collider, low)
-	for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_PRE_PICKUP_COLLISION]) do
-		local returnVal;
-
-		if not functionTable.Parameters then
-			returnVal = functionTable.FunctionRef(pickup, collider, low)
-        elseif functionTable.Parameters[1] == pickup.Variant then
-			if not functionTable.Parameters[2] or functionTable.Parameters[2] == pickup.SubType then
-				returnVal = functionTable.FunctionRef(pickup, collider, low)
-			end
-		end
-
-		if returnVal ~= nil then
-			return returnVal
-		end
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, Exodus.PrePickupCollision)
-
---[[ (Private)
-   Runs all functions attached using an MC_USE_CARD callback
-   Allows the passing of a Card ID to the callback to prevent unnecessary function calls
-]]
-function Exodus:UseCard(card)
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_USE_CARD]) do
-        if not functionTable.Parameters or functionTable.Parameters == card then
-            functionTable.FunctionRef(card)
-        end
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_USE_CARD, Exodus.UseCard)
-
---[[ (Private)
-    Runs all functions attached using an MC_USE_ITEM callback
-    Allows the passing of an Item ID to the callback to prevent unnecessary function calls
-    Passes the player into the function reference to assist with player based item usage
-]]
 function Exodus:UseItem(collectibleType, itemRng)
     if collectibleType == CollectibleType.COLLECTIBLE_BOX_OF_FRIENDS then
         for pIndex = 1, pExodus.PlayerCount do
@@ -769,7 +615,7 @@ function Exodus:UseItem(collectibleType, itemRng)
         end
     end
     
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_USE_ITEM]) do
+    --[[for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_USE_ITEM]) do
         if not functionTable.Parameters or functionTable.Parameters == collectibleType then
             for pIndex = 1, pExodus.PlayerCount do
                 local player = pExodus.Players[pIndex]
@@ -779,15 +625,11 @@ function Exodus:UseItem(collectibleType, itemRng)
                 end
             end
         end
-    end
+    end]]
 end
 
 Exodus:AddCallback(ModCallbacks.MC_USE_ITEM, Exodus.UseItem)
 
---[[ (Private)
-    Runs all functions attached using an MC_FAMILIAR_INIT callback
-    Allows the passing of a Variant to the callback to prevent unnecessary function calls
-]]
 function Exodus:FamiliarInit(familiar)
     if familiar.Variant == FamiliarVariant.DEMON_BABY then
         HandleExcessFamiliars(familiar, CollectibleType.COLLECTIBLE_DEMON_BABY)
@@ -798,34 +640,14 @@ function Exodus:FamiliarInit(familiar)
             HandleExcessFamiliars(familiar, fam.ItemId)
         end
     end
-    
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_FAMILIAR_INIT]) do
-        if not functionTable.Parameters or functionTable.Parameters == familiar.Variant then
-            functionTable.FunctionRef(familiar)
-        end
-    end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, Exodus.FamiliarInit)
 
---[[ (Private)
-    Runs all functions attaches using an MC_FAMILIAR_UPDATE callback
-    Allows the passing of a Variant to the callback to prevent unnecessary function calls
-]]
-function Exodus:FamiliarUpdate(familiar)
-    for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_FAMILIAR_UPDATE]) do
-        if not functionTable.Parameters or functionTable.Parameters == familiar.Variant then
-            functionTable.FunctionRef(familiar)
-        end
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, Exodus.FamiliarUpdate)
-
 -------------------
 --<<<REQUIRING>>>--
 -------------------
-
+--[[
 -- Requires all necessary passive item Lua files
 for index, item in ipairs({
     "ArcadeToken", -- DONE
@@ -931,6 +753,7 @@ for index, enemy in ipairs({
 }) do
     require("scripts/enemies/" .. enemy)
 end
+]]
 
 -------------------------------
 --<<<GENERIC MOD FUNCTIONS>>>-- (Most of these don't even get used)
