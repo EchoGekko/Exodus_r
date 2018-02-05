@@ -440,8 +440,8 @@ end
 -- Stores all function and parameters to use with the existing callbacks (Private)
 local ExodusCalls = {}
 
-function pExodus:AddCallback(callback, func, params, multiplayer)
-    local functionTable = { FunctionRef = func, Parameters = params or {}, Multiplayer = multiplayer or false }
+function pExodus:AddCallback(callback, func, multiplayer, ...)
+    local functionTable = { FunctionRef = func, Parameters = {...}, Multiplayer = multiplayer or false }
     
     if ExodusCalls[callback] == nil then
         ExodusCalls[callback] = { functionTable }
@@ -450,26 +450,58 @@ function pExodus:AddCallback(callback, func, params, multiplayer)
     end
 end
 
+local function CompareEntityToTable(entity, table)
+    if (not table[1] or entity.Type == table[1]) and (not table[2] or entity.Variant == table[2]) and (table[3] or entity.SubType == table[3]) then
+        return true
+    end
+end
+
+local EntityCompareCallbacks = {
+    [ModCallbacks.MC_ENTITY_TAKE_DMG] = true,
+    [ModCallbacks.MC_NPC_UPDATE] = true,
+    [ModCallbacks.MC_POST_NPC_INIT] = true
+}
+
+local SingleParamCallbacks = {
+    [ModCallbacks.MC_USE_ITEM] = true,
+    [ModCallbacks.MC_GET_CARD] = true,
+    [ModCallbacks.MC_FAMILIAR_UPDATE] = true,
+    [ModCallbacks.MC_FAMILIAR_INIT] = true
+}
+
 local function CheckParameters(callback, callbackParams, functionParams)
+    -- Checking if the passed in CacheFlag matches the one being evaluated
     if callback == ModCallbacks.MC_EVALUATE_CACHE then
-        if callbackParams[2] == functionParams[1] then
-            return true
+        if callbackParams[2] ~= functionParams[1] then
+            return false
         end
-    elseif callback == ModCallbacks.MC_ENTITY_TAKE_DMG then
-        if (callbackParams[1].Type == functionParams[1] or  functionParams[1]) and (callbackParams[1].Variant == functionParams[2] or not functionParams[2])
-        and (callbackParams[1].SubType == functionParams[3] or not functionParams[3]) then
-            return true
+    -- Checking if the passed in Type, Variant and SubType match the entity parameter
+    elseif EntityCompareCallbacks[callback] then
+        if not CompareEntityToTable(callbackParams[1], functionParams) then
+            return false
+        end
+    -- Checking if the passed in value matches the single parameter
+    elseif SingleParamCallbacks[callback] then
+        if callbackParams[1] ~= functionParams[1] then
+            return false
         end
     end
     
-    return false
+    for i, call in pairs(ModCallbacks) do
+        if call == callback then
+            Isaac.DebugString("[ERROR] Callback " .. i .. " is unsupported by the CheckParameters function. Consider rectifying...")
+            break
+        end
+    end
+    
+    return true
 end
 
 function Exodus:GenericFunction(callback, ...)
     local callbackParams = ...
     
     for i, functionTable in ipairs(ExodusCalls[callback]) do
-        if CheckParameters(callback, callbackParams, functionTable.Parameters) then
+        if #functionTable.Parameters == 0 or CheckParameters(callback, callbackParams, functionTable.Parameters) then
             if functionTable.Multiplayer then
                 for i = 1, pExodus.PlayerCount do
                     local params = {}
@@ -478,26 +510,29 @@ function Exodus:GenericFunction(callback, ...)
                     functionTable.FunctionRef(table.unpack(params))
                 end
             else
-                functionTable.FunctionRef(table.unpack(callbackParams))
+                if callback == ModCallbacks.MC_USE_ITEM then
+                    for pIndex = 1, pExodus.PlayerCount do
+                        local player = pExodus.Players[pIndex]
+                        
+                        if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.index - 1) > 0.0 and not player.ref:NeedsCharge() then
+                            local params = {}
+                            table.move(callbackParams, 1, #callbackParams, 1, params)
+                            table.insert(params, player)
+                            functionTable.FunctionRef(table.unpack(params))
+                        end
+                    end
+                else
+                    functionTable.FunctionRef(table.unpack(callbackParams))
+                end
             end
         end
     end
 end
 
-for i, callback in ipairs({
-            ModCallbacks.MC_EVALUATE_CACHE,
-            ModCallbacks.MC_ENTITY_TAKE_DMG
-        }) do
+for i, callback in pairs(ModCallbacks) do
     ExodusCalls[callback] = {}
     Exodus:AddCallback(callback, function(exodus, ...) Exodus:GenericFunction(callback, {...}) end)
 end
-
-function pExodus.damage(entity, amount, flags, source, frames, player)
-    Isaac.ConsoleOutput("Player took damage")
-end
-
-pExodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, pExodus.damage, { EntityType.ENTITY_PLAYER }, true)
-
 
 function Exodus:PostUpdate()
     GetPlayers()
@@ -614,18 +649,6 @@ function Exodus:UseItem(collectibleType, itemRng)
             end
         end
     end
-    
-    --[[for i, functionTable in ipairs(ExodusCalls[ModCallbacks.MC_USE_ITEM]) do
-        if not functionTable.Parameters or functionTable.Parameters == collectibleType then
-            for pIndex = 1, pExodus.PlayerCount do
-                local player = pExodus.Players[pIndex]
-                
-                if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.index - 1) > 0.0 and not player.ref:NeedsCharge() then
-                    functionTable.FunctionRef(player.ref, collectibleType, itemRng)
-                end
-            end
-        end
-    end]]
 end
 
 Exodus:AddCallback(ModCallbacks.MC_USE_ITEM, Exodus.UseItem)
@@ -647,7 +670,7 @@ Exodus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, Exodus.FamiliarInit)
 -------------------
 --<<<REQUIRING>>>--
 -------------------
---[[
+
 -- Requires all necessary passive item Lua files
 for index, item in ipairs({
     "ArcadeToken", -- DONE
@@ -753,7 +776,6 @@ for index, enemy in ipairs({
 }) do
     require("scripts/enemies/" .. enemy)
 end
-]]
 
 -------------------------------
 --<<<GENERIC MOD FUNCTIONS>>>-- (Most of these don't even get used)
