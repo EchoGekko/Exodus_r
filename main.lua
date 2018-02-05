@@ -17,6 +17,8 @@ pExodus.ItemPool = pExodus.Game:GetItemPool()
 pExodus.NullVector = Vector(0, 0)
 pExodus.Players = {}
 pExodus.PlayerCount = 0
+pExodus.Room = nil
+pExodus.RoomEntities = nil
 
 ----------------------
 --<<<ENUMERATIONS>>>--
