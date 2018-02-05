@@ -57,8 +57,6 @@ pExodus.ItemId = {
     ---<<PASSIVES>>---
     UNHOLY_MANTLE = Isaac.GetItemIdByName("Unholy Mantle"),
     WELCOME_MAT = Isaac.GetItemIdByName("Welcome Mat"),
-    YIN = Isaac.GetItemIdByName("Yin"),
-    YANG = Isaac.GetItemIdByName("Yang"),
     CLOCK_PIECE_1 = Isaac.GetItemIdByName("Clock Piece 1"),
     CLOCK_PIECE_2 = Isaac.GetItemIdByName("Clock Piece 2"),
     CLOCK_PIECE_3 = Isaac.GetItemIdByName("Clock Piece 3"),
@@ -853,8 +851,8 @@ for index, item in ipairs({
     "TheApocryphon", -- DONE
     "UnholyMantle",
     "WelcomeMat",
-    "Yang",
-    "Yin"
+    "Yang", -- DONE
+    "Yin" -- DONE
 }) do
     require("scripts/passives/" .. item)
 end
