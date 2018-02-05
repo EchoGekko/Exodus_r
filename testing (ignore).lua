@@ -1,9 +1,9 @@
 local Exodus = RegisterMod("Exodus", 1)
 local ExodusCalls = {}
-local pExodus = { PlayerCount = 3, Players = { 1, 2, 3 }}
+local pExodus = { PlayerCount = 1, Players = { 1, 2, 3 }}
 
 function pExodus:AddCallback(callback, func, params, multiplayer)
-    local functionTable = { FunctionRef = func, Parameters = params, Multiplayer = multiplayer or false }
+    local functionTable = { FunctionRef = func, Parameters = params or {}, Multiplayer = multiplayer or false }
     
     if ExodusCalls[callback] == nil then
         ExodusCalls[callback] = { functionTable }
@@ -12,24 +12,35 @@ function pExodus:AddCallback(callback, func, params, multiplayer)
     end
 end
 
-function Exodus:GenericFunction(callback, callbackParams)
-    for i, functionTable in ipairs(ExodusCalls[callback]) do
-        local valid = true
-        
-        for u, param in pairs(functionTable.Parameters) do
-            if param ~= callbackParams[u] then
-                valid = false
-                break
-            end
+local function CheckParameters(callback, callbackParams, functionParams)
+    if callback == ModCallbacks.MC_EVALUATE_CACHE then
+        if callbackParams[2] == functionParams[1] then
+            return true
         end
-        
-        if valid then
+    elseif callback == ModCallbacks.MC_ENTITY_TAKE_DMG then
+        if (callbackParams[1].Type == functionParams[1] or  functionParams[1]) and (callbackParams[1].Variant == functionParams[2] or not functionParams[2])
+        and (callbackParams[1].SubType == functionParams[3] or not functionParams[3]) then
+            return true
+        end
+    end
+    
+    return false
+end
+
+function Exodus:GenericFunction(callback, ...)
+    local callbackParams = ...
+    
+    for i, functionTable in ipairs(ExodusCalls[callback]) do
+        if CheckParameters(callback, callbackParams, functionTable.Parameters) then
             if functionTable.Multiplayer then
                 for i = 1, pExodus.PlayerCount do
-                    functionTable.FunctionRef(pExodus.Players[i], callbackParams)
+                    local params = {}
+                    table.move(callbackParams, 1, #callbackParams, 1, params)
+                    table.insert(params, pExodus.Players[i])
+                    functionTable.FunctionRef(table.unpack(params))
                 end
             else
-                functionTable.FunctionRef(callbackParams)
+                functionTable.FunctionRef(table.unpack(callbackParams))
             end
         end
     end
@@ -38,23 +49,13 @@ end
 for i, callback in ipairs({
             ModCallbacks.MC_EVALUATE_CACHE,
             ModCallbacks.MC_ENTITY_TAKE_DMG
-        } do
-    Exodus:AddCallback(callback, function(...) Exodus:GenericFunction(callback, {...}) end)
+        }) do
+    ExodusCalls[callback] = {}
+    Exodus:AddCallback(callback, function(exodus, ...) Exodus:GenericFunction(callback, {...}) end)
 end
 
-function pExodus.testFunction(params)
-    for i, param in pairs(params) do
-        print(tostring(param))
-    end
+function pExodus.damage(entity, amount, flags, source, frames, player)
+    Isaac.ConsoleOutput("Player took damage")
 end
 
-pExodus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, pExodus.testFunction, { nil, CacheFlag.CACHE_DAMAGE })
-
-function pExodus.testFunction2(player, params)
-    print(tostring(player))
-    for i, param in pairs(params) do
-        print(tostring(param))
-    end
-end
-
-pExodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, pExodus.testFunction2, { EntityType.ENTITY_PLAYER }, true)
+pExodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, pExodus.damage, { EntityType.ENTITY_PLAYER }, true)
