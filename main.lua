@@ -462,11 +462,18 @@ local EntityCompareCallbacks = {
     [ModCallbacks.MC_POST_NPC_INIT] = true
 }
 
-local SingleParamCallbacks = {
+local GenericParameterCallbacks = {
     [ModCallbacks.MC_USE_ITEM] = true,
     [ModCallbacks.MC_GET_CARD] = true,
     [ModCallbacks.MC_FAMILIAR_UPDATE] = true,
-    [ModCallbacks.MC_FAMILIAR_INIT] = true
+    [ModCallbacks.MC_FAMILIAR_INIT] = true,
+    [ModCallbacks.MC_PRE_PICKUP_COLLISION] = true
+}
+
+-- PREVENTS EXCESS OUTPUT WHEN DEBUGGING
+local IgnoreCallbacks = {
+    ModCallbacks.MC_POST_RENDER = true,
+    ModCallbacks.MC_POST_UPDATE = true
 }
 
 local function CheckParameters(callback, callbackParams, functionParams)
@@ -481,16 +488,20 @@ local function CheckParameters(callback, callbackParams, functionParams)
             return false
         end
     -- Checking if the passed in value matches the single parameter
-    elseif SingleParamCallbacks[callback] then
-        if callbackParams[1] ~= functionParams[1] then
-            return false
+    elseif GenericParameterCallbacks[callback] then
+        for i, param in pairs(callbackParams) do
+            if functionParams[i] and param ~= functionParams[i] then
+                return false
+            end
         end
     end
     
-    for i, call in pairs(ModCallbacks) do
-        if call == callback then
-            Isaac.DebugString("[ERROR] Callback " .. i .. " is unsupported by the CheckParameters function. Consider rectifying...")
-            break
+    if not IgnoreCallbacks[callback] then
+        for i, call in pairs(ModCallbacks) do
+            if call == callback then
+                Isaac.DebugString("[ERROR] Callback " .. i .. " is unsupported by the CheckParameters function. Consider rectifying...")
+                break
+            end
         end
     end
     

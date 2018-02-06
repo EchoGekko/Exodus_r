@@ -9,6 +9,12 @@ RenderBar.Scale = Vector(1.3, 1.3)
 
 pExodus.ItemId.GLUTTONYS_STOMACH = Isaac.GetItemIdByName("Gluttony's Stomach")
 
+function pExodus.reset()
+    Parts = { 0, 0, 0, 0 }
+end
+
+pExodus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, pExodus.reset)
+
 function pExodus.gluttonysStomachPickup(pickup, collider, low)
     local player = collider:ToPlayer()
     local playerIndex = pExodus.GetPlayerByRef(player).index
@@ -45,7 +51,7 @@ function pExodus.gluttonysStomachPickup(pickup, collider, low)
     end
 end
 
-pExodus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, pExodus.gluttonysStomachPickup, { PickupVariant.PICKUP_HEART })
+pExodus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, pExodus.gluttonysStomachPickup, false, PickupVariant.PICKUP_HEART)
 
 function pExodus.gluttonysStomachRender()
     for i = 1, pExodus.PlayerCount do
@@ -59,7 +65,7 @@ function pExodus.gluttonysStomachRender()
         if player:HasCollectible(pExodus.ItemId.GLUTTONYS_STOMACH) and playerType ~= PlayerType.PLAYER_THELOST and playerType ~= PlayerType.PLAYER_KEEPER and (level:GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN ~= LevelCurse.CURSE_OF_THE_UNKNOWN) and (room:GetType() ~= RoomType.ROOM_BOSS or room:GetFrameCount() >= 1) then
             RenderBar.Scale = Vector(1.3, 1.3)
             RenderBar:SetFrame("Heart", math.min(PartsMax, Parts[playerIndex]))
-             
+            
             local renderMod = 3
             if i == 1 then
                 renderMod = 6
