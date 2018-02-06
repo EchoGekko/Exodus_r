@@ -472,8 +472,8 @@ local GenericParameterCallbacks = {
 
 -- PREVENTS EXCESS OUTPUT WHEN DEBUGGING
 local IgnoreCallbacks = {
-    ModCallbacks.MC_POST_RENDER = true,
-    ModCallbacks.MC_POST_UPDATE = true
+    [ModCallbacks.MC_POST_RENDER] = true,
+    [ModCallbacks.MC_POST_UPDATE] = true
 }
 
 local function CheckParameters(callback, callbackParams, functionParams)
