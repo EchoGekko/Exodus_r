@@ -58,7 +58,6 @@ pExodus.ChampionFlag = {
 pExodus.ItemId = {
     ---<<PASSIVES>>---
     UNHOLY_MANTLE = Isaac.GetItemIdByName("Unholy Mantle"),
-    WELCOME_MAT = Isaac.GetItemIdByName("Welcome Mat"),
     CLOCK_PIECE_1 = Isaac.GetItemIdByName("Clock Piece 1"),
     CLOCK_PIECE_2 = Isaac.GetItemIdByName("Clock Piece 2"),
     CLOCK_PIECE_3 = Isaac.GetItemIdByName("Clock Piece 3"),
@@ -708,7 +707,7 @@ for index, item in ipairs({
     "Tech360", -- DONE
     "TheApocryphon", -- DONE
     "UnholyMantle",
-    "WelcomeMat",
+    "WelcomeMat", -- DONE
     "Yang", -- DONE
     "Yin" -- DONE
 }) do
