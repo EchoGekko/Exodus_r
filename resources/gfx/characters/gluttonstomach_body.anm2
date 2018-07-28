@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="1/15/2018 8:24:48 AM" Version="118" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/23/2018 10:25:08 AM" Version="119" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\gluttonys_stomach_body.png" Id="0"/>
+			<Spritesheet Path="costumes\gluttonstomach\gluttonys_stomach_body.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>

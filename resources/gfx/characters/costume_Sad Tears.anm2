@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="micromario" CreatedOn="1/9/2018 7:44:12 PM" Version="114" Fps="30"/>
+	<Info CreatedBy="micromario" CreatedOn="7/23/2018 10:19:18 AM" Version="115" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\costume_Sad Tears.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_sadtears.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="head1" Id="0" SpritesheetId="0"/>

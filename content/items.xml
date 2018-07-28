@@ -1,66 +1,66 @@
 <items gfxroot="gfx/items/" version="1">
 	<!-- Passive Items -->
-	<passive description="Hive minded" name="Beehive" gfx="Beehive.png"/>
-	<passive description="Even they are crying" name="Sad Tears" gfx="Sad Tears.png" cache="shotspeed range"/>
-	<passive description="Leaky shot" name="Busted Pipe" gfx="Busted Pipe.png" />
-	<passive description="Satanic offense" name="Unholy Mantle" gfx="Unholy Mantle.png" devilprice="2"/>
-	<passive description="Reinvent the wheel" name="Tech 360"  gfx="Tech 360.png" cache="firedelay range"/>
-	<passive description="Ouch!" name="Paper Cut" gfx="Paper Cut.png"/>
-	<passive description="I still can't remember" name="Forget Me Later" gfx="Forget Me Later.png"/>
-	<passive description="Line of fire" name="Dragon Breath" gfx="Dragon Breath.png" cache="firedelay damage"/>
-	<passive description="Win streak" name="Cobalt Necklace" gfx="Cobalt Necklace.png" cache="damage"/>
-	<passive description="Bountiful immolation" name="Pig Blood" gfx="Pig Blood.png"/>
-	<passive description="Squish" name="Dad's Boots" gfx="Dad's Boots.png" cache="speed"/>
-	<passive description="Where did it come from?" name="Mysterious Mustache" gfx="Mysterious Mustache.png"/>
-	<passive description="Tock tick" name="Cursed Metronome" gfx="Cursed Metronome.png" cache="luck"/>
-	<passive description="Running with them!" name="Big Scissors" gfx="Big Scissors.png" cache="speed"/>
-	<passive description="No place like home" name="Welcome Mat" gfx="Welcome Mat.png"/>
-	<passive description="Part from your heart" name="Gluttony's Stomach" gfx="Gluttony's Stomach.png"/>
-	<passive description="Haunted blast! +5 bombs" name="Possessed Bombs" gfx="Possessed Bombs.png" bombs="5"/>
-	<passive description="Blight shot" name="Buttrot" gfx="Buttrot.png"/>
-	<passive description="Size matters" name="Sling" gfx="Sling.png"/>
-	<passive description="Negativity" name="Yin" gfx="Yin.png" cache="firedelay" blackhearts="2" devilprice="2"/>
-	<passive description="Positivity" name="Yang" gfx="Yang.png" cache="damage" soulhearts="2"/>
-	<passive description="Already occurred" name="Deja Vu" gfx="Deja Vu.png"/>
-	<passive description="Heart of gold" name="Fool's Gold" gfx="Fools Gold.png"/>
-	<passive description="Scariest face" name="Makeup Remover" gfx="Makeup Remover.png"/>
-	<passive description="Insert coin" name="Arcade Token" gfx="Arcade Token.png"/>
-	<passive description="Pay your respects" name="Hand of Greed" gfx="Hand of Greed.png"/>
-	<passive description="Rim" name="Clock Piece 1" gfx="Clock Piece 1.png"/>
-	<passive description="Face" name="Clock Piece 2" gfx="Clock Piece 2.png"/>
-	<passive description="Big hand" name="Clock Piece 3" gfx="Clock Piece 3.png"/>
-	<passive description="Small hand" name="Clock Piece 4" gfx="Clock Piece 4.png"/>
-	<passive description="Take it to the grave" name="The Apocryphon" gfx="The Apocryphon.png" cache="speed firedelay damage luck shotspeed range"/>
+	<passive description="Hive minded" name="Beehive" gfx="collectibles_beehive.png"/>
+	<passive description="Even they are crying" name="Sad Tears" gfx="collectibles_sadtears.png" cache="shotspeed range"/>
+	<passive description="Leaky shot" name="Busted Pipe" gfx="collectibles_bustedpipe.png" />
+	<passive description="Satanic offense" name="Unholy Mantle" gfx="collectibles_unholymantle.png" devilprice="2"/>
+	<passive description="Reinvent the wheel" name="Tech 360"  gfx="collectibles_tech360.png" cache="firedelay range"/>
+	<passive description="Ouch!" name="Paper Cut" gfx="collectibles_papercut.png"/>
+	<passive description="I still can't remember" name="Forget Me Later" gfx="collectibles_forgetmelater.png"/>
+	<passive description="Line of fire" name="Dragon Breath" gfx="collectibles_dragonbreath.png" cache="firedelay damage"/>
+	<passive description="Win streak" name="Cobalt Necklace" gfx="collectibles_cobaltnecklace.png" cache="damage"/>
+	<passive description="Bountiful immolation" name="Pig Blood" gfx="collectibles_pigblood.png"/>
+	<passive description="Squish" name="Dad's Boots" gfx="collectibles_dad'sboots.png" cache="speed"/>
+	<passive description="Where did it come from?" name="Mysterious Mustache" gfx="collectibles_mysteriousmustache.png"/>
+	<passive description="Tock tick" name="Cursed Metronome" gfx="collectibles_cursedmetronome.png" cache="luck"/>
+	<passive description="Running with them!" name="Big Scissors" gfx="collectibles_bigscissors.png" cache="speed"/>
+	<passive description="No place like home" name="Welcome Mat" gfx="collectibles_welcomematt.png"/>
+	<passive description="Part from your heart" name="Gluttony's Stomach" gfx="collectibles_gluttonysstomach.png"/>
+	<passive description="Haunted blast! +5 bombs" name="Possessed Bombs" gfx="collectibles_possessedbombs.png" bombs="5"/>
+	<passive description="Blight shot" name="Buttrot" gfx="collectibles_buttrot.png"/>
+	<passive description="Size matters" name="Sling" gfx="collectibles_sling.png"/>
+	<passive description="Negativity" name="Yin" gfx="collectibles_yin.png" cache="firedelay" blackhearts="2" devilprice="2"/>
+	<passive description="Positivity" name="Yang" gfx="collectibles_yang.png" cache="damage" soulhearts="2"/>
+	<passive description="Already occurred" name="Deja Vu" gfx="collectibles_dejavu.png"/>
+	<passive description="Heart of gold" name="Fool's Gold" gfx="collectibles_fool'sgold.png"/>
+	<passive description="Scariest face" name="Makeup Remover" gfx="collectibles_makeupremover.png"/>
+	<passive description="Insert coin" name="Arcade Token" gfx="collectibles_arcadetoken.png"/>
+	<passive description="Pay your respects" name="Hand of Greed" gfx="collectibles_handofgreed.png"/>
+	<passive description="Rim" name="Clock Piece 1" gfx="collectibles_clockpiece_1.png"/>
+	<passive description="Face" name="Clock Piece 2" gfx="collectibles_clockpiece_2.png"/>
+	<passive description="Big hand" name="Clock Piece 3" gfx="collectibles_clockpiece_3.png"/>
+	<passive description="Small hand" name="Clock Piece 4" gfx="collectibles_clockpiece_4.png"/>
+	<passive description="Take it to the grave" name="The Apocryphon" gfx="collectibles_theapocryphon.png" cache="speed firedelay damage luck shotspeed range"/>
 
 	<!-- Active Items -->
-	<active description="The ultimate sacrifice" name="The Forbidden Fruit" gfx="Forbidden Fruit.png" maxcharges="0"/>
-	<active description="Sacrificial" name="Wrath of the Lamb" gfx="Wrath of the Lamb.png" maxcharges="12" cache="all" devilprice="2"/>
-	<active description="A noxious spring" name="Birdbath" gfx="Birdbath.png" maxcharges="3"/>
-	<active description="Don't drop it" name="Ominous Lantern" gfx="Ominous Lantern.png"  maxcharges="1"/>
-	<active description="Batter up!" name="Baseball Mitt" gfx="Baseball Mitt.png" maxcharges="1" />
-	<active description="You're bringing everyone down" name="The Pseudobulbar Affect" gfx="The Pseudobulbar Affect.png" maxcharges="4"/>
-	<active description="Science project" name="Mutant Clover" gfx="Mutant Clover.png" maxcharges="6"/>
-	<active description="All stats up, but..." name="Tragic Mushroom" gfx="Tragic Mushroom.png" maxcharges="0"/>
-	<active description="Recall your destiny" name="Anamnesis" gfx="Anamnesis.png" maxcharges="6" discharged="true"/>
-	<active description="Super jump" name="Hurdle Heels" gfx="Hurdle Heels.png" maxcharges="2"/>
-	<active description="Hand me down" name="Fuller's Club" gfx="Fuller's Club.png" maxcharges="6"/>
+	<active description="The ultimate sacrifice" name="The Forbidden Fruit" gfx="collectibles_forbiddenfruit.png" maxcharges="0"/>
+	<active description="Sacrificial" name="Wrath of the Lamb" gfx="collectibles_wrathofthelamb.png" maxcharges="12" cache="all" devilprice="2"/>
+	<active description="A noxious spring" name="Birdbath" gfx="collectibles_birdbath.png" maxcharges="3"/>
+	<active description="Don't drop it" name="Ominous Lantern" gfx="collectibles_ominouslantern.png"  maxcharges="1"/>
+	<active description="Batter up!" name="Baseball Mitt" gfx="collectibles_baseballmitt.png" maxcharges="1" />
+	<active description="You're bringing everyone down" name="The Pseudobulbar Affect" gfx="collectibles_ThePseudobulbarAffect.png" maxcharges="4"/>
+	<active description="Science project" name="Mutant Clover" gfx="collectibles_mutantclover.png" maxcharges="6"/>
+	<active description="All stats up, but..." name="Tragic Mushroom" gfx="collectibles_tragicmushroom.png" maxcharges="0"/>
+	<active description="Recall your destiny" name="Anamnesis" gfx="collectibles_anamnesis.png" maxcharges="6" discharged="true"/>
+	<active description="Super jump" name="Hurdle Heels" gfx="collectibles_hurdleheels.png" maxcharges="2"/>
+	<active description="Hand me down" name="Fuller's Club" gfx="collectibles_fullersclub.png" maxcharges="6"/>
 
 	<!-- Familiar Items -->
-	<familiar description="Yummy" gfx="Hungry Hippo.png" name="Hungry Hippo" cache="familiars"/>
-	<familiar description="Light them up" gfx="Ritual Candle.png" name="Ritual Candle" devilprice="2"/>
-	<familiar description="Lil' planet" gfx="Astro Baby.png" name="Astro Baby" cache="familiars" />
-	<familiar description="Miniral" gfx="Lil Rune.png" name="Lil Rune" cache="familiars" />
-	<familiar description="Day after day" gfx="Sundial.png" name="Sundial" cache="familiars"/>
-	<familiar description="Upgraded and unaided" gfx="Robobaby 360.png" name="Robo-Baby 3.6.0" cache="familiars" />
+	<familiar description="Yummy" gfx="collectibles_hungryhippo.png" name="Hungry Hippo" cache="familiars"/>
+	<familiar description="Light them up" gfx="collectibles_ritualcandle.png" name="Ritual Candle" devilprice="2"/>
+	<familiar description="Lil' planet" gfx="collectibles_astrobaby.png" name="Astro Baby" cache="familiars" />
+	<familiar description="Miniral" gfx="collectibles_lilrune.png" name="Lil Rune" cache="familiars" />
+	<familiar description="Day after day" gfx="collectibles_sundial.png" name="Sundial" cache="familiars"/>
+	<familiar description="Upgraded and unaided" gfx="collectibles_robobaby360.png" name="Robo-Baby 3.6.0" cache="familiars" />
 	
 	<!-- Trinkets -->
-	<trinket description="Eeek Ooop" gfx="Grid Worm.png" name="Grid Worm" cache="range"/>
-	<trinket description="What's inside?" gfx="Burlap Sack.png" name="Burlap Sack"/>
-	<trinket description="Don't get pushed around" gfx="Sturdy Stone.png" name="Pet Rock"/>
-	<trinket description="Wealth of infestation" gfx="Rotten Penny.png" name="Rotten Penny"/>
-	<trinket description="It's a secret" gfx="Blue Moon.png" name="Blue Moon"/>
-	<trinket description="Who's there!?" gfx="Broken Glasses.png" name="Broken Glasses" />
-	<trinket description="Booooo-OOM!" gfx="Bombs Soul.png" name="Bomb's Soul" />
-	<trinket description="Close quarters" gfx="Claustrophobia.png" name="Claustrophobia" />
-	<trinket description="Everything you know is a lie" gfx="Flyder.png" name="Flyder" />
+	<trinket description="Eeek Ooop" gfx="trinket_gridworm.png" name="Grid Worm" cache="range"/>
+	<trinket description="It's full of bottlecaps" gfx="trinket_counterfeitsack.png" name="Burlap Sack"/>
+	<trinket description="Don't get pushed around" gfx="trinket_sturystone.png" name="Pet Rock"/>
+	<trinket description="Wealth of infestation" gfx="trinket_rottenpenny.png" name="Rotten Penny"/>
+	<trinket description="It's a secret" gfx="trinket_bluemoon.png" name="Blue Moon"/>
+	<trinket description="Who's there!?" gfx="trinket_brokenglasses.png" name="Broken Glasses" />
+	<trinket description="Booooo-OOM!" gfx="trinket_bombssoul.png" name="Bomb's Soul" />
+	<trinket description="Close quarters" gfx="trinket_claustraphobia.png" name="Claustrophobia" />
+	<trinket description="Everything you know is a lie" gfx="trinket_flyder.png" name="Flyder" />
 </items>

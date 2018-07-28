@@ -1,17 +1,14 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="1/20/2018 12:30:14 AM" Version="125" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/23/2018 10:23:19 AM" Version="126" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\dragonsbreath_body.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_dragonbreath_body.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>
 		</Layers>
 		<Nulls/>
-		<Events>
-			<Event Name="sparkle" Id="0"/>
-			<Event Name="blah" Id="1"/>
-		</Events>
+		<Events/>
 	</Content>
 	<Animations DefaultAnimation="WalkDown">
 		<Animation Name="WalkLeft" FrameNum="20" Loop="true">

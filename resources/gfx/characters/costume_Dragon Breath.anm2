@@ -1,19 +1,16 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="1/20/2018 12:29:48 AM" Version="126" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/23/2018 10:13:11 AM" Version="127" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="..\Documents\My Games\Binding of Isaac Afterbirth+ Mods\Exodus_r\resources\gfx\characters\costumes\costume_Dragon Breath.png" Id="0"/>
-			<Spritesheet Path="..\Documents\My Games\Binding of Isaac Afterbirth+ Mods\Exodus_r\resources\gfx\characters\costumes\dragonsbreath_fire_overlay.png" Id="1"/>
+			<Spritesheet Path="costumes\costume_dragonbreath.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_dragonsbreath_overlay.png" Id="1"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="head" Id="0" SpritesheetId="0"/>
 			<Layer Name="fire" Id="1" SpritesheetId="1"/>
 		</Layers>
 		<Nulls/>
-		<Events>
-			<Event Name="sparkle" Id="0"/>
-			<Event Name="blah" Id="1"/>
-		</Events>
+		<Events/>
 	</Content>
 	<Animations DefaultAnimation="HeadLeft">
 		<Animation Name="HeadLeft" FrameNum="4" Loop="false">

@@ -1,9 +1,9 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="1/14/2018 8:16:15 PM" Version="6" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="7/23/2018 10:52:02 AM" Version="7" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\The Binding of Isaac Rebirth\resources\gfx\items\slots\slot_009_bomb_bum.png" Id="0"/>
-			<Spritesheet Path="items\slots\angry_beggars.png" Id="1"/>
+			<Spritesheet Path="items\slots\slot_angry_beggars.png" Id="1"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Sign" Id="0" SpritesheetId="0"/>

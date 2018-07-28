@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="micromario" CreatedOn="11/23/2017 1:22:18 PM" Version="109" Fps="30"/>
+	<Info CreatedBy="micromario" CreatedOn="7/23/2018 10:17:49 AM" Version="110" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\costume_Pig Blood.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_pigblood.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="head0" Id="0" SpritesheetId="0"/>

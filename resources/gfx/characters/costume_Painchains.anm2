@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="1/19/2018 10:32:31 PM" Version="111" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/23/2018 10:15:47 AM" Version="112" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\pain_chain_costume.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_painchains.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="head2" Id="0" SpritesheetId="0"/>

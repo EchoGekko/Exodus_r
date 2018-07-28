@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="11/14/2017 3:37:45 PM" Version="106" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/23/2018 2:07:07 PM" Version="107" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="Robobaby 3.6.0.png" Id="0"/>
+			<Spritesheet Path="familiar_robobaby360.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>

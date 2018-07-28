@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="9/13/2017 11:22:15 PM" Version="133" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/23/2018 2:06:48 PM" Version="134" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="Candle_.png" Id="0"/>
+			<Spritesheet Path="familiar_candle.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>

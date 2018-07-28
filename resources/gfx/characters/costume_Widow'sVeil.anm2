@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="micromario" CreatedOn="1/20/2018 12:04:21 AM" Version="111" Fps="30"/>
+	<Info CreatedBy="micromario" CreatedOn="7/23/2018 10:21:27 AM" Version="112" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\widows_veil.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_widow'sveil.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="head" Id="0" SpritesheetId="0"/>

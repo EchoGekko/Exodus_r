@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="micromario" CreatedOn="9/9/2017 5:36:04 PM" Version="108" Fps="30"/>
+	<Info CreatedBy="micromario" CreatedOn="7/23/2018 10:10:46 AM" Version="109" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="costumes\costume_Beehive.png" Id="0"/>

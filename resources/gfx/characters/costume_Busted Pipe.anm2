@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="micromario" CreatedOn="1/20/2018 1:36:16 AM" Version="108" Fps="30"/>
+	<Info CreatedBy="micromario" CreatedOn="7/23/2018 10:11:03 AM" Version="109" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\Shadow\costume_Busted Pipe_shadowjudas.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_Busted Pipe.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="head2" Id="0" SpritesheetId="0"/>

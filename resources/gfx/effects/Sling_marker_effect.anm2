@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="21/11/2017 11:45:57 PM" Version="15" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="7/23/2018 11:31:51 AM" Version="17" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="sling_icon.png" Id="0"/>
+			<Spritesheet Path="sling_effect.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Main" Id="0" SpritesheetId="0"/>
@@ -17,7 +17,7 @@
 			</RootAnimation>
 			<LayerAnimations>
 				<LayerAnimation LayerId="0" Visible="true">
-					<Frame XPosition="6" YPosition="-10" XPivot="17" YPivot="29" XCrop="-1" YCrop="-1" Width="19" Height="24" XScale="85" YScale="80" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="250" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="true"/>
+					<Frame XPosition="7" YPosition="3" XPivot="15" YPivot="45" XCrop="-2" YCrop="-1" Width="19" Height="19" XScale="120" YScale="100" Delay="1" Visible="true" RedTint="245" GreenTint="245" BlueTint="245" AlphaTint="240" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="true"/>
 				</LayerAnimation>
 			</LayerAnimations>
 			<NullAnimations/>

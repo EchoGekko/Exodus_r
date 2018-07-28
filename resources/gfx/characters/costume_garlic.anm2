@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="micromario" CreatedOn="1/21/2018 6:47:33 PM" Version="115" Fps="30"/>
+	<Info CreatedBy="micromario" CreatedOn="7/23/2018 10:13:48 AM" Version="116" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\Shadow\garlic_costume_shadowjudas.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_garlic.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="head1" Id="0" SpritesheetId="0"/>

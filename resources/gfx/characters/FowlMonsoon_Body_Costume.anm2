@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="1/19/2018 11:44:02 PM" Version="117" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/23/2018 10:24:09 AM" Version="118" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="..\..\..\..\Documents\My Games\Binding of Isaac Afterbirth+ Mods\Exodus_r\resources\gfx\characters\costumes\Fowl_Monsoon_Costume.png" Id="0"/>
+			<Spritesheet Path="costumes\costume_fowlmonsoon_body.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body1" Id="0" SpritesheetId="0"/>
