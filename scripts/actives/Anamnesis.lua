@@ -3,7 +3,7 @@ local playerVars = {}
 
 pExodus.ItemId.ANAMNESIS = Isaac.GetItemIdByName("Anamnesis")
 
-function pExodus.resetTable()
+function pExodus.anamnesisResetTable()
     playerVars = {
         { IsHolding = false, Charge = 0 },
         { IsHolding = false, Charge = 0 },
@@ -12,29 +12,31 @@ function pExodus.resetTable()
     }
 end
 
-pExodus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, pExodus.resetTable)
+pExodus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, pExodus.anamnesisResetTable)
 
-function pExodus.anamnesisUse(player)
-    local config = Isaac.GetItemConfig()
-    local collectibleList = {}
-    
-    for i = 1, #config:GetCollectibles() do
-        local value = config:GetCollectible(i)
-        
-        if value and player:HasCollectible(value.ID) then
-            table.insert(collectibleList, value.ID)
-        end
-    end
-    
-    for i, entity in pairs(pExodus.RoomEntities) do
-        local pickup = entity:ToPickup()
-        
-        if pickup and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
-            pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, collectibleList[math.random(#collectibleList)], true)
-        end
-    end
-    
-    return true
+function pExodus.anamnesisUse()
+	local player = pExodus:UsedPlayer().ref
+	
+	local config = Isaac.GetItemConfig()
+	local collectibleList = {}
+	
+	for i = 1, #config:GetCollectibles() do
+		local value = config:GetCollectible(i)
+		
+		if value and player:HasCollectible(value.ID) then
+			table.insert(collectibleList, value.ID)
+		end
+	end
+	
+	for i, entity in pairs(pExodus.RoomEntities) do
+		local pickup = entity:ToPickup()
+		
+		if pickup and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
+			pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, collectibleList[math.random(#collectibleList)], true)
+		end
+	end
+	
+	return true
 end
 
 pExodus:AddCallback(ModCallbacks.MC_USE_ITEM, pExodus.anamnesisUse, ItemId.ANAMNESIS)

@@ -64,7 +64,6 @@ pExodus.ItemId = {
     CLOCK_PIECE_4 = Isaac.GetItemIdByName("Clock Piece 4"),
     
     ---<<ACTIVES>>---
-    FORBIDDEN_FRUIT = Isaac.GetItemIdByName("The Forbidden Fruit"),
     WRATH_OF_THE_LAMB = Isaac.GetItemIdByName("Wrath of the Lamb"),
     BIRDBATH = Isaac.GetItemIdByName("Birdbath"),
     OMINOUS_LANTERN = Isaac.GetItemIdByName("Ominous Lantern"),
@@ -250,7 +249,6 @@ function Exodus.newGame(fromSave)
             ---<<ACTIVES>>---
             MUTANT_CLOVER = { Used = 0 },
             TRAGIC_MUSHROOM = { Uses = 0 },
-            FORBIDDEN_FRUIT = { UseCount = 0 },
             BASEBALL_MITT = { Used = false, Lifted = true, BallsCaught = 0, UseDelay = 0 },
             PSEUDOBULBAR_AFFECT = { Icon = Sprite() },
             OMINOUS_LANTERN = { Fired = true, Lifted = false, Hid = false, LastEnemyHit = nil, FrameModifier = 300 },
@@ -647,18 +645,14 @@ Exodus:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Exodus.PostNpcInit)
 
 function Exodus:UseItem(collectibleType, itemRng)
     if collectibleType == CollectibleType.COLLECTIBLE_BOX_OF_FRIENDS then
-        for pIndex = 1, pExodus.PlayerCount do
-            local player = pExodus.Players[pIndex]
-            
-            if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.ref.ControllerIndex) > 0.0 and not player.ref:NeedsCharge() then
-                if not BoxOfFriendsUses[player.index] then
-                    BoxOfFriendsUses[player.index] = 1
-                else
-                    BoxOfFriendsUses[player.index] = BoxOfFriendsUses[player.index] + 1
-                end
-            end
-        end
-    end
+        local player = Exodus:UsedPlayer()
+		
+		if not BoxOfFriendsUses[player.index] then
+			BoxOfFriendsUses[player.index] = 1
+		else
+			BoxOfFriendsUses[player.index] = BoxOfFriendsUses[player.index] + 1
+		end
+	end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_USE_ITEM, Exodus.UseItem)
@@ -719,7 +713,7 @@ for index, item in ipairs({
     "Anamnesis", -- DONE
     "BaseballMitt",
     "Birdbath",
-    "ForbiddenFruit",
+    "ForbiddenFruit", -- DONE
     "FullersClub",
     "HurdleHeels",
     "MutantClover",
@@ -896,6 +890,17 @@ function pExodus:PlayerIsMoving(player)
     end
     
     return false
+end
+
+
+function pExodus:UsedPlayer()
+	for pIndex = 1, pExodus.PlayerCount do
+		local player = pExodus.Players[pIndex]
+		
+		if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.ref.ControllerIndex) > 0.0 and not player.ref:NeedsCharge() then
+			return player
+		end
+	end
 end
 
 function pExodus:PlayTearSprite(tear, anm2)
