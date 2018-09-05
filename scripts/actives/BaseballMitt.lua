@@ -3,7 +3,7 @@ local ItemVariables = pExodus.ItemVariables
 local Entities = pExodus.Entities
 local rng = RNG()
 
-pExodus.ItemId.ANAMNESIS = Isaac.GetItemIdByName("Baseball Mitt")
+pExodus.ItemId.BASEBALL_MITT = Isaac.GetItemIdByName("Baseball Mitt")
 
 function pExodus.baseballMittUpdate()
     local player = Isaac.GetPlayer(0)
@@ -71,12 +71,14 @@ end
 
 pExodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, pExodus.baseballMittDamage, EntityType.ENTITY_PLAYER)
 
-function pExodus.baseballMittUse()
-    ItemVariables.BASEBALL_MITT.Used = true
-    ItemVariables.BASEBALL_MITT.Lifted = false
-    ItemVariables.BASEBALL_MITT.BallsCaught = 0
-    ItemVariables.BASEBALL_MITT.UseDelay = pExodus.Game:GetFrameCount()
-    pExodus.LiftActive = true
+function pExodus.baseballMittUse(active)
+	if active == ItemId.BASEBALL_MITT then
+		ItemVariables.BASEBALL_MITT.Used = true
+		ItemVariables.BASEBALL_MITT.Lifted = false
+		ItemVariables.BASEBALL_MITT.BallsCaught = 0
+		ItemVariables.BASEBALL_MITT.UseDelay = pExodus.Game:GetFrameCount()
+		pExodus.LiftActive = true
+	end
 end
 
 pExodus:AddCallback(ModCallbacks.MC_USE_ITEM, pExodus.baseballMittUse, ItemId.BASEBALL_MITT)

@@ -64,11 +64,8 @@ pExodus.ItemId = {
     CLOCK_PIECE_4 = Isaac.GetItemIdByName("Clock Piece 4"),
     
     ---<<ACTIVES>>---
-    FORBIDDEN_FRUIT = Isaac.GetItemIdByName("The Forbidden Fruit"),
     WRATH_OF_THE_LAMB = Isaac.GetItemIdByName("Wrath of the Lamb"),
-    BIRDBATH = Isaac.GetItemIdByName("Birdbath"),
     OMINOUS_LANTERN = Isaac.GetItemIdByName("Ominous Lantern"),
-    BASEBALL_MITT = Isaac.GetItemIdByName("Baseball Mitt"),
     PSEUDOBULBAR_AFFECT = Isaac.GetItemIdByName("The Pseudobulbar Affect"),
     MUTANT_CLOVER = Isaac.GetItemIdByName("Mutant Clover"),
     TRAGIC_MUSHROOM = Isaac.GetItemIdByName("Tragic Mushroom"),
@@ -617,9 +614,9 @@ end
 -- Requires all necessary active item Lua files
 for index, item in ipairs({
     "Anamnesis", -- DONE
-    "BaseballMitt",
-    --"Birdbath",
-    --"ForbiddenFruit",
+    "BaseballMitt", -- DONE
+    "Birdbath", -- DONE
+    "ForbiddenFruit", -- DONE
     --"FullersClub",
     --"HurdleHeels",
     --"MutantClover",

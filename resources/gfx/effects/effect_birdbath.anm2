@@ -1,15 +1,15 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="11/12/2017 8:56:31 AM" Version="14" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="9/5/2018 11:48:56 AM" Version="15" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="big_birdbath.png" Id="0"/>
+			<Spritesheet Path="effect_birdbath.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Fountain" Id="0" SpritesheetId="0"/>
 			<Layer Name="Succ" Id="1" SpritesheetId="0"/>
 		</Layers>
 		<Nulls>
-			<Null Name="OverlayEffect" Id="0"/>
+			<Null Name="OverlayEffect" Id="0" ShowRect="false"/>
 		</Nulls>
 		<Events/>
 	</Content>
