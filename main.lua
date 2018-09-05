@@ -17,6 +17,7 @@ pExodus.NullVector = Vector(0, 0)
 pExodus.Room = nil
 pExodus.RoomEntities = nil
 pExodus.PreventDMG = false
+pExodus.LiftActive = false
 local rng = RNG()
 
 ----------------------
@@ -57,7 +58,6 @@ pExodus.ChampionFlag = {
 pExodus.ItemId = {
     ---<<PASSIVES>>---
     UNHOLY_MANTLE = Isaac.GetItemIdByName("Unholy Mantle"),
-    WELCOME_MAT = Isaac.GetItemIdByName("Welcome Mat"),
     CLOCK_PIECE_1 = Isaac.GetItemIdByName("Clock Piece 1"),
     CLOCK_PIECE_2 = Isaac.GetItemIdByName("Clock Piece 2"),
     CLOCK_PIECE_3 = Isaac.GetItemIdByName("Clock Piece 3"),
@@ -555,6 +555,10 @@ function Exodus:UseItem(collectibleType, itemRng)
 			end
 		end
     end
+	if pExodus.LiftActive then
+		pExodus.LiftActive = false
+		return true
+	end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_USE_ITEM, Exodus.UseItem)
@@ -610,24 +614,24 @@ for index, item in ipairs({
     require("scripts/passives/" .. item)
 end
 
---[[
 -- Requires all necessary active item Lua files
 for index, item in ipairs({
-    "Anamnesis", -- OLD
+    "Anamnesis", -- DONE
     "BaseballMitt",
-    "Birdbath",
-    "ForbiddenFruit",
-    "FullersClub",
-    "HurdleHeels",
-    "MutantClover",
-    "OminousLantern",
-    "PseudobulbarAffect",
-    "TragicMushroom",
-    "WrathOfTheLamb"
+    --"Birdbath",
+    --"ForbiddenFruit",
+    --"FullersClub",
+    --"HurdleHeels",
+    --"MutantClover",
+    --"OminousLantern",
+    --"PseudobulbarAffect",
+    --"TragicMushroom",
+    --"WrathOfTheLamb"
 }) do
     require("scripts/actives/" .. item)
 end
 
+--[[
 -- Requires all necessary trinket Lua files
 for index, trinket in ipairs({
     "BlueMoon", -- OLD
