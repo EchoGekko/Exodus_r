@@ -3,7 +3,7 @@ local ItemId = pExodus.ItemId
 pExodus.ItemId.ARCADE_TOKEN = Isaac.GetItemIdByName("Arcade Token")
 
 function pExodus.arcadeTokenUpdate()
-	player = Isaac.GetPlayer(0)
+	local player = Isaac.GetPlayer(0)
 	Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY, Isaac.GetFreeNearPosition(player.Position, 50), pExodus.NullVector, nil)
 end
 

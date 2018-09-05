@@ -16,6 +16,7 @@ pExodus.ItemPool = pExodus.Game:GetItemPool()
 pExodus.NullVector = Vector(0, 0)
 pExodus.Room = nil
 pExodus.RoomEntities = nil
+pExodus.PreventDMG = false
 local rng = RNG()
 
 ----------------------
@@ -488,6 +489,17 @@ end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_UPDATE, Exodus.PostUpdate)
 
+function Exodus:EntityTakeDMG(target, amount, flag, source, cdtimer)
+	local player = Isaac.GetPlayer(0)
+	
+    if target.Type == EntityType.ENTITY_PLAYER and pExodus.PreventDMG then
+		pExodus.PreventDMG = false
+		return false
+	end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Exodus.EntityTakeDMG)
+
 function Exodus:PostNewRoom()
     local room = pExodus.Game:GetRoom()
     pExodus.Room = room
@@ -572,13 +584,13 @@ for index, item in ipairs({
     "BigScissors", -- DONE
     "BustedPipe", -- DONE
     "Buttrot", -- DONE
-    "CobaltNecklace", -- OLD
-    --"CursedMetronome", -- OLD
-    --"DadsBoots", -- OLD
-    --"DejaVu", -- OLD
-    --"DragonBreath", -- OLD
-    --"FoolsGold", -- OLD
-    --"ForgetMeLater", -- OLD
+    "CobaltNecklace", -- DONE
+    "CursedMetronome", -- DONE
+	"DadsBoots", -- DONE
+    "DejaVu", -- DONE
+    "DragonBreath", -- DONE
+    "FoolsGold", -- DONE
+    "ForgetMeLater", -- DONE
     --"GluttonysStomach", -- OLD
     --"HandOfGreed", -- OLD
     --"MakeupRemover", -- OLD

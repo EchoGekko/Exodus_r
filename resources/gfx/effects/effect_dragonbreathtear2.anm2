@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="micromario" CreatedOn="2014-02-03 23:51:21.202226" Fps="30" Version="103"/>
+	<Info CreatedBy="micromario" CreatedOn="9/5/2018 9:15:11 AM" Version="104" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Id="0" Path="effect_fireball2.png"/>
+			<Spritesheet Path="effect_dragonbreathtear2.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Spritesheet0" Id="0" SpritesheetId="0"/>

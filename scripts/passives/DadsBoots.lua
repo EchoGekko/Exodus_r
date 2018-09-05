@@ -28,46 +28,44 @@ local Squishables = {
 } 
 
 function pExodus.dadsBootsUpdate()
-    for pIndex = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[pIndex].ref
-        
-        if player:HasCollectible(ItemId.DADS_BOOTS) then
-            for i, entity in pairs(pExodus.RoomEntities) do
-                if entity:IsActiveEnemy(false) then
-                    for v, squishy in pairs(Squishables) do
-                        if squishy.id == entity.Type and (squishy.variant == entity.Variant or squishy.variant == nil) and (squishy.subtype == entity.SubType or squishy.subtype == nil) and
-                        entity.Position:DistanceSquared(player.Position) < (player.Size + entity.Size)^2 and pExodus:PlayerIsMoving(player) then
-                            entity:Die()
-                            sfx:Play(SoundEffect.SOUND_ANIMAL_SQUISH, 1, 0, false, entity.Size / 8)
-                        end
-                    end
-                end
-            end
-        end
-    end
+	local player = Isaac.GetPlayer(0)
+	
+	if player:HasCollectible(ItemId.DADS_BOOTS) then
+		for i, entity in pairs(pExodus.RoomEntities) do
+			if entity:IsActiveEnemy(false) then
+				for v, squishy in pairs(Squishables) do
+					if squishy.id == entity.Type and (squishy.variant == entity.Variant or squishy.variant == nil) and (squishy.subtype == entity.SubType or squishy.subtype == nil) and
+					entity.Position:DistanceSquared(player.Position) < (player.Size + entity.Size)^2 and pExodus:PlayerIsMoving(player) then
+						entity:Die()
+						sfx:Play(SoundEffect.SOUND_ANIMAL_SQUISH, 1, 0, false, entity.Size / 8)
+					end
+				end
+			end
+		end
+	end
 end
 
 pExodus:AddCallback(ModCallbacks.MC_POST_UPDATE, pExodus.dadsBootsUpdate)
 
 function pExodus.dadsBootsDamage(target, amount, flag, source, cdtimer)
-    local player = target:ToPlayer()
+    local player = Isaac.GetPlayer(0)
     
-    if player and player:HasCollectible(ItemId.DADS_BOOTS) then
+    if target.Type == EntityType.ENTITY_PLAYER and player:HasCollectible(ItemId.DADS_BOOTS) then
         if (flag & DamageFlag.DAMAGE_SPIKES) > 0 or (flag & DamageFlag.DAMAGE_ACID) > 0 then
-            return false
+            pExodus.PreventDMG = true
         end
         
         for i, squishy in pairs(Squishables) do
             if squishy.id == source.Type and (squishy.variant == source.Variant or squishy.variant == nil) and (squishy.subtype == source.SubType or squishy.subtype == nil) then
                 if pExodus:PlayerIsMoving(player) then
-                    return false
+                    pExodus.PreventDMG = true
                 end
             end
         end
     end
 end
 
-pExodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, pExodus.dadsBootsDamage, { EntityType.ENTITY_PLAYER })
+pExodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, pExodus.dadsBootsDamage, EntityType.ENTITY_PLAYER )
 
 function pExodus.dadsBootsCache(player, flag)
     if player:HasCollectible(ItemId.DADS_BOOTS) then

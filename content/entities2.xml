@@ -40,11 +40,11 @@
         <preload-snd id="48" /> <!-- SOUND_FORESTBOSS_STOMPS -->
     </entity>
 
-    <entity anm2path="effects/Fireball.anm2" reroll="false" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" id="2" name="Fireball" numGridCollisionPoints="12" shadowSize="16" stageHP="0" variant="1032">
+    <entity anm2path="effects/effect_dragonbreathtear.anm2" reroll="false" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" id="2" name="Fireball" numGridCollisionPoints="12" shadowSize="16" stageHP="0" variant="1032">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
     </entity>
 
-    <entity anm2path="effects/Fireball 2.anm2" reroll="false" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" id="2" name="Fireball 2" numGridCollisionPoints="12" shadowSize="16" stageHP="0" variant="1033">
+    <entity anm2path="effects/effect_dragonbreathtear2.anm2" reroll="false" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" id="2" name="Fireball 2" numGridCollisionPoints="12" shadowSize="16" stageHP="0" variant="1033">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
     </entity>
 
