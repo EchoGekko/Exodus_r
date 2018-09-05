@@ -37,8 +37,8 @@ function pExodus.buttrotUpdate()
 				if entities[i]:IsDead() then
 					local splash = Isaac.Spawn(pExodus.Entities.BLIGHT_SPLASH.id, pExodus.Entities.BLIGHT_SPLASH.variant, 0, entities[i].Position + Vector(0, entities[i]:ToTear().Height), Vector(0,0), nil):ToEffect()
 					splash:SetTimeout(30)                
-				--elseif not player:HasCollectible(pExodus.ItemId.TECH_360) then
-					--entities[i].Visible = true
+				elseif not player:HasCollectible(pExodus.ItemId.TECH_360) then
+					entities[i].Visible = true
 				end
 			end
 			

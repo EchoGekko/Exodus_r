@@ -596,16 +596,16 @@ for index, item in ipairs({
     "MakeupRemover", -- DONE
     "MysteriousMustache", -- DONE
     "PaperCut", -- DONE
-    "PigBlood", -- OLD
-    --"PossessedBombs", -- OLD
-    --"SadTears", -- OLD
-    --"Sling", -- OLD
-    --"Tech360", -- OLD
-    --"TheApocryphon", -- OLD
-    --"UnholyMantle",
-    --"WelcomeMat",
-    --"Yang", -- OLD
-    --"Yin" -- OLD
+    "PigBlood", -- DONE
+    "PossessedBombs", -- DONE
+    "SadTears", -- DONE
+    "Sling", -- DONE
+    "Tech360", -- DONE
+    --"TheApocryphon", -- HOLD
+    --"UnholyMantle", -- HOLD
+    "WelcomeMat", -- DONE
+    "Yang", -- DONE
+    "Yin" -- DONE
 }) do
     require("scripts/passives/" .. item)
 end

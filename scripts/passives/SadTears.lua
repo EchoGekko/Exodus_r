@@ -1,27 +1,25 @@
 local ItemId = pExodus.ItemId
-local rng = pExodus.RNG
+local rng = RNG()
 
 pExodus.ItemId.SAD_TEARS = Isaac.GetItemIdByName("Sad Tears")
 pExodus.CostumeId.SAD_TEARS = Isaac.GetCostumeIdByPath("gfx/characters/costume_Sad Tears.anm2")
 pExodus:AddItemCostume(ItemId.SAD_TEARS, pExodus.CostumeId.SAD_TEARS)
 
 function pExodus.sadTearsUpdate()
-    for pIndex = 1, pExodus.PlayerCount do
-        local player = pExodus.Players[pIndex].ref
-        
-        if player:HasCollectible(ItemId.SAD_TEARS) then
-            for i, entity in pairs(pExodus.RoomEntities) do
-                local data = entity:GetData()
-                
-                if entity.Type == EntityType.ENTITY_TEAR and data.IsSadTear ~= true then
-                    if player.FireDelay == player.MaxFireDelay and rng:RandomInt(math.max(1, 5 - player.Luck)) == 0 and entity.FrameCount > 1 then
-                        local shot_tear = player:FireTear(entity.Position, RandomVector() * entity.Velocity:Length() * ((player.ShotSpeed + 0.4) / player.ShotSpeed), false, false, false)
-                        data.IsSadTear = true
-                    end
-                end
-            end
-        end
-    end
+	local player = Isaac.GetPlayer(0)
+	
+	if player:HasCollectible(ItemId.SAD_TEARS) then
+		for i, entity in pairs(pExodus.RoomEntities) do
+			local data = entity:GetData()
+			
+			if entity.Type == EntityType.ENTITY_TEAR and data.IsSadTear ~= true then
+				if player.FireDelay == player.MaxFireDelay and rng:RandomInt(math.max(1, 5 - player.Luck)) == 0 and entity.FrameCount > 1 then
+					local shot_tear = player:FireTear(entity.Position, RandomVector() * entity.Velocity:Length() * ((player.ShotSpeed + 0.4) / player.ShotSpeed), false, false, false)
+					data.IsSadTear = true
+				end
+			end
+		end
+	end
 end
 
 pExodus:AddCallback(ModCallbacks.MC_POST_UPDATE, pExodus.sadTearsUpdate)
