@@ -415,8 +415,8 @@ end
 -- Stores all function and parameters to use with the existing callbacks (Private)
 local ExodusCalls = {}
 
-function pExodus:AddCallback(callback, func, multiplayer, ...)
-    local functionTable = { FunctionRef = func, Parameters = {...}, Multiplayer = multiplayer or false }
+function pExodus:AddCallback(callback, func, ...)
+    local functionTable = { FunctionRef = func, Parameters = ... }
     
     if ExodusCalls[callback] == nil then
         ExodusCalls[callback] = { functionTable }
@@ -425,15 +425,6 @@ function pExodus:AddCallback(callback, func, multiplayer, ...)
     end
 end
 
-local function CompareEntityToTable(entity, table)
-    if (not table[1] or entity.Type == table[1]) and (not table[2] or entity.Variant == table[2]) and (table[3] or entity.SubType == table[3]) then
-        return true
-    end
-end
-
-local EntityCompareCallbacks = {
-    [ModCallbacks.MC_ENTITY_TAKE_DMG] = true,
-    [ModCallbacks.MC_NPC_UPDATE] = true,
 function Exodus:GenericFunction(callback, ...)
     local callbackParams = ...
     
