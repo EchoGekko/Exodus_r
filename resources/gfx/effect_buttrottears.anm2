@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="9/6/2017 9:26:59 PM" Version="111" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="9/5/2018 7:42:20 AM" Version="112" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="effects\blight_tears.png" Id="0"/>
+			<Spritesheet Path="effects\effect_buttrottears.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>

@@ -10,15 +10,13 @@ pExodus = {}
 
 -- Generic variables to be used by any code outside this main.lua to prevent calling game methods multiple times (Public)
 pExodus.Game = Game()
-pExodus.RNG = RNG()
 pExodus.SFX = SFXManager()
 pExodus.Music = MusicManager()
 pExodus.ItemPool = pExodus.Game:GetItemPool()
 pExodus.NullVector = Vector(0, 0)
-pExodus.Players = {}
-pExodus.PlayerCount = 0
 pExodus.Room = nil
 pExodus.RoomEntities = nil
+local rng = RNG()
 
 ----------------------
 --<<<ENUMERATIONS>>>--
@@ -58,12 +56,14 @@ pExodus.ChampionFlag = {
 pExodus.ItemId = {
     ---<<PASSIVES>>---
     UNHOLY_MANTLE = Isaac.GetItemIdByName("Unholy Mantle"),
+    WELCOME_MAT = Isaac.GetItemIdByName("Welcome Mat"),
     CLOCK_PIECE_1 = Isaac.GetItemIdByName("Clock Piece 1"),
     CLOCK_PIECE_2 = Isaac.GetItemIdByName("Clock Piece 2"),
     CLOCK_PIECE_3 = Isaac.GetItemIdByName("Clock Piece 3"),
     CLOCK_PIECE_4 = Isaac.GetItemIdByName("Clock Piece 4"),
     
     ---<<ACTIVES>>---
+    FORBIDDEN_FRUIT = Isaac.GetItemIdByName("The Forbidden Fruit"),
     WRATH_OF_THE_LAMB = Isaac.GetItemIdByName("Wrath of the Lamb"),
     BIRDBATH = Isaac.GetItemIdByName("Birdbath"),
     OMINOUS_LANTERN = Isaac.GetItemIdByName("Ominous Lantern"),
@@ -249,6 +249,7 @@ function Exodus.newGame(fromSave)
             ---<<ACTIVES>>---
             MUTANT_CLOVER = { Used = 0 },
             TRAGIC_MUSHROOM = { Uses = 0 },
+            FORBIDDEN_FRUIT = { UseCount = 0 },
             BASEBALL_MITT = { Used = false, Lifted = true, BallsCaught = 0, UseDelay = 0 },
             PSEUDOBULBAR_AFFECT = { Icon = Sprite() },
             OMINOUS_LANTERN = { Fired = true, Lifted = false, Hid = false, LastEnemyHit = nil, FrameModifier = 300 },
@@ -319,7 +320,7 @@ function Exodus.newGame(fromSave)
     end
     
 	-- Ensures the RNG stays seeded to the run's seed
-	pExodus.RNG:SetSeed(pExodus.Game:GetSeeds():GetStartSeed(), 0)
+	rng:SetSeed(pExodus.Game:GetSeeds():GetStartSeed(), 0)
     math.randomseed(pExodus.Game:GetSeeds():GetStartSeed())
 end
 
@@ -329,25 +330,6 @@ Exodus.newGame(false)
 --------------------------------
 --<<<BASE MOD FUNCTIONALITY>>>-- (Effectively a simple Exodus API)
 --------------------------------
-
--- Stores all player entities in the pExodus.Players table with a reference and an index to the table
-local function GetPlayers()
-    pExodus.Players = {}
-    pExodus.PlayerCount = pExodus.Game:GetNumPlayers()
-    
-    for i = 1, pExodus.PlayerCount do
-        pExodus.Players[i] = { ref = Isaac.GetPlayer(i - 1), index = i }
-    end
-end
-
--- Returns a player table from pExodus.Players that matches the passed in player reference
-function pExodus.GetPlayerByRef(ref)
-    for i, player in ipairs(pExodus.Players) do
-        if player.ref.Index == ref.Index and player.ref.InitSeed == ref.InitSeed then
-            return player
-        end
-    end
-end
 
 -- Allows developers to easily tie a costume to an item by calling pExodus:AddItemCostume(ItemID, CostumeID) (Private)
 local ItemCostumes = {}
@@ -409,25 +391,21 @@ local ExodusCallbacks = pExodus.ExodusCallbacks
 
 -- Stores all functions and parameters to use with the custom callbacks (Private)
 local CustomCalls = {
-	[ExodusCallbacks.MC_ADD_COLLECTIBLE] = { {}, {}, {}, {} },
-	[ExodusCallbacks.MC_REMOVE_COLLECTIBLE] = { {}, {}, {}, {} }
+	[ExodusCallbacks.MC_ADD_COLLECTIBLE] = {},
+	[ExodusCallbacks.MC_REMOVE_COLLECTIBLE] = {}
 }
 
 -- Handles the setting up of custom callbacks to streamline development (Public)
 function pExodus:AddCustomCallback(callback, func, params)
 	if callback == ExodusCallbacks.MC_ADD_COLLECTIBLE then
 		if params and type(params) == "number" then
-            for i = 1, 4 do
-                table.insert(CustomCalls[callback][i], { ItemCount = 0, ItemId = params, FunctionRef = func })
-            end
+            table.insert(CustomCalls[callback], { ItemCount = 0, ItemId = params, FunctionRef = func })
 		else
 			error("Expected an item ID argument to MC_ADD_COLLECTIBLE callback.", 2)
 		end
 	elseif callback == ExodusCallbacks.MC_REMOVE_COLLECTIBLE then
 		if params and type(params) == "number" then
-            for i = 1, 4 do
-                table.insert(CustomCalls[callback][i], { ItemCount = 0, ItemId = params, FunctionRef = func })
-            end
+            table.insert(CustomCalls[callback], { ItemCount = 0, ItemId = params, FunctionRef = func })
 		else
 			error("Expected an item ID argument to MC_REMOVE_COLLECTIBLE callback.", 2)
 		end
@@ -456,84 +434,11 @@ end
 local EntityCompareCallbacks = {
     [ModCallbacks.MC_ENTITY_TAKE_DMG] = true,
     [ModCallbacks.MC_NPC_UPDATE] = true,
-    [ModCallbacks.MC_POST_NPC_INIT] = true
-}
-
-local GenericParameterCallbacks = {
-    [ModCallbacks.MC_USE_ITEM] = true,
-    [ModCallbacks.MC_GET_CARD] = true,
-    [ModCallbacks.MC_FAMILIAR_UPDATE] = true,
-    [ModCallbacks.MC_FAMILIAR_INIT] = true,
-    [ModCallbacks.MC_PRE_PICKUP_COLLISION] = true
-}
-
--- PREVENTS EXCESS OUTPUT WHEN DEBUGGING
-local IgnoreCallbacks = {
-    [ModCallbacks.MC_POST_RENDER] = true,
-    [ModCallbacks.MC_POST_UPDATE] = true
-}
-
-local function CheckParameters(callback, callbackParams, functionParams)
-    -- Checking if the passed in CacheFlag matches the one being evaluated
-    if callback == ModCallbacks.MC_EVALUATE_CACHE then
-        if callbackParams[2] ~= functionParams[1] then
-            return false
-        end
-    -- Checking if the passed in Type, Variant and SubType match the entity parameter
-    elseif EntityCompareCallbacks[callback] then
-        if not CompareEntityToTable(callbackParams[1], functionParams) then
-            return false
-        end
-    -- Checking if the passed in value matches the single parameter
-    elseif GenericParameterCallbacks[callback] then
-        for i, param in pairs(callbackParams) do
-            if functionParams[i] and param ~= functionParams[i] then
-                return false
-            end
-        end
-    end
-    
-    if not IgnoreCallbacks[callback] then
-        for i, call in pairs(ModCallbacks) do
-            if call == callback then
-                Isaac.DebugString("[ERROR] Callback " .. i .. " is unsupported by the CheckParameters function. Consider rectifying...")
-                break
-            end
-        end
-    end
-    
-    return true
-end
-
 function Exodus:GenericFunction(callback, ...)
     local callbackParams = ...
     
     for i, functionTable in ipairs(ExodusCalls[callback]) do
-        if #functionTable.Parameters == 0 or CheckParameters(callback, callbackParams, functionTable.Parameters) then
-            if functionTable.Multiplayer then
-                for i = 1, pExodus.PlayerCount do
-                    local params = {}
-                    table.move(callbackParams, 1, #callbackParams, 1, params)
-                    table.insert(params, pExodus.Players[i])
-                    functionTable.FunctionRef(table.unpack(params))
-                end
-            else
-                if callback == ModCallbacks.MC_USE_ITEM then
-                    for pIndex = 1, pExodus.PlayerCount do
-                        local player = pExodus.Players[pIndex]
-                        
-                        if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.index - 1) > 0.0 and not player.ref:NeedsCharge() then
-                            local params = {}
-                            table.move(callbackParams, 1, #callbackParams, 1, params)
-                            table.insert(params, player)
-                            functionTable.FunctionRef(table.unpack(params))
-                        end
-                    end
-                else
-                    functionTable.FunctionRef(table.unpack(callbackParams))
-                end
-            end
-        end
+        functionTable.FunctionRef(table.unpack(callbackParams))
     end
 end
 
@@ -543,62 +448,56 @@ for i, callback in pairs(ModCallbacks) do
 end
 
 function Exodus:PostUpdate()
-    GetPlayers()
     
     pExodus.RoomEntities = Isaac.GetRoomEntities()
-    
-	for pIndex = 1, pExodus.PlayerCount do
-        local exodusPlayer = pExodus.Players[pIndex]
-        local player = exodusPlayer.ref
-        
-        for u, functionTable in ipairs(CustomCalls[ExodusCallbacks.MC_ADD_COLLECTIBLE][pIndex]) do
-            local itemCount = player:GetCollectibleNum(functionTable.ItemId)
-            
-            if functionTable.ItemCount < itemCount then
-                for i = functionTable.ItemCount, itemCount - 1 do
-                    functionTable.FunctionRef(exodusPlayer)
-                end
-            end
-            
-            functionTable.ItemCount = itemCount
-        end
-        
-        for u, functionTable in ipairs(CustomCalls[ExodusCallbacks.MC_REMOVE_COLLECTIBLE][pIndex]) do
-            local itemCount = player:GetCollectibleNum(functionTable.ItemId)
-            local noneLeft = false
-            
-            if functionTable.ItemCount > itemCount then
-                for z = functionTable.ItemCount - 1, itemCount, -1 do
-                    if z == 0 then
-                        noneLeft = true
-                    end
-                    
-                    functionTable.FunctionRef(exodusPlayer, noneLeft)
-                end
-            end
-            
-            functionTable.ItemCount = itemCount
-        end
-        
-        for u, costumeTable in ipairs(ItemCostumes) do
-            if player:HasCollectible(costumeTable.ItemId) then
-                if not costumeTable.HasCostume[pIndex] then
-                    player:AddNullCostume(costumeTable.CostumeId)
-                    costumeTable.HasCostume[pIndex] = true
-                end
-            elseif costumeTable.HasCostume[pIndex] then
-                player:TryRemoveNullCostume(costumeTable.CostumeId)
-                costumeTable.HasCostume[pIndex] = false
-            end
-        end
-    end
+
+	local player = Isaac.GetPlayer(0)
+	
+	for u, functionTable in ipairs(CustomCalls[ExodusCallbacks.MC_ADD_COLLECTIBLE]) do
+		local itemCount = player:GetCollectibleNum(functionTable.ItemId)
+		
+		if functionTable.ItemCount < itemCount then
+			for i = functionTable.ItemCount, itemCount - 1 do
+				functionTable.FunctionRef(1)
+			end
+		end
+		
+		functionTable.ItemCount = itemCount
+	end
+	
+	for u, functionTable in ipairs(CustomCalls[ExodusCallbacks.MC_REMOVE_COLLECTIBLE]) do
+		local itemCount = player:GetCollectibleNum(functionTable.ItemId)
+		local noneLeft = false
+		
+		if functionTable.ItemCount > itemCount then
+			for z = functionTable.ItemCount - 1, itemCount, -1 do
+				if z == 0 then
+					noneLeft = true
+				end
+				
+				functionTable.FunctionRef(1, noneLeft)
+			end
+		end
+		
+		functionTable.ItemCount = itemCount
+	end
+	
+	for u, costumeTable in ipairs(ItemCostumes) do
+		if player:HasCollectible(costumeTable.ItemId) then
+			if not costumeTable.HasCostume then
+				player:AddNullCostume(costumeTable.CostumeId)
+				costumeTable.HasCostume = true
+			end
+		elseif costumeTable.HasCostume then
+			player:TryRemoveNullCostume(costumeTable.CostumeId)
+			costumeTable.HasCostume = false
+		end
+	end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_UPDATE, Exodus.PostUpdate)
 
 function Exodus:PostNewRoom()
-    GetPlayers()
-    
     local room = pExodus.Game:GetRoom()
     pExodus.Room = room
     pExodus.RoomEntities = Isaac.GetRoomEntities()
@@ -609,8 +508,6 @@ end
 Exodus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Exodus.PostNewRoom)
 
 function Exodus:PostNewLevel()
-    GetPlayers()
-    
     local level = pExodus.Game:GetLevel()
     pExodus.Level = level
 end
@@ -621,7 +518,7 @@ function Exodus:EvaluateCache(player, cacheFlag)
     if cacheFlag == CacheFlag.CACHE_FAMILIARS then
         for i, familiar in ipairs(FamiliarCaches) do
             if player:HasCollectible(familiar.ItemId) then
-                player:CheckFamiliar(familiar.Variant, player:GetCollectibleNum(familiar.ItemId) + (BoxOfFriendsUses[pExodus.GetExodusPlayerByRef(player).index] or 0), pExodus.RNG)
+                player:CheckFamiliar(familiar.Variant, player:GetCollectibleNum(familiar.ItemId) + (BoxOfFriendsUses or 0), rng)
             end
         end
     end
@@ -645,14 +542,16 @@ Exodus:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Exodus.PostNpcInit)
 
 function Exodus:UseItem(collectibleType, itemRng)
     if collectibleType == CollectibleType.COLLECTIBLE_BOX_OF_FRIENDS then
-        local player = Exodus:UsedPlayer()
+		local player = Isaac.GetPlayer(0)
 		
-		if not BoxOfFriendsUses[player.index] then
-			BoxOfFriendsUses[player.index] = 1
-		else
-			BoxOfFriendsUses[player.index] = BoxOfFriendsUses[player.index] + 1
+		if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.ControllerIndex) > 0.0 and not player:NeedsCharge() then
+			if not BoxOfFriendsUses then
+				BoxOfFriendsUses = 1
+			else
+				BoxOfFriendsUses = BoxOfFriendsUses + 1
+			end
 		end
-	end
+    end
 end
 
 Exodus:AddCallback(ModCallbacks.MC_USE_ITEM, Exodus.UseItem)
@@ -682,38 +581,39 @@ for index, item in ipairs({
     "BigScissors", -- DONE
     "BustedPipe", -- DONE
     "Buttrot", -- DONE
-    "CobaltNecklace", -- DONE
-    "CursedMetronome", -- DONE
-    "DadsBoots", -- DONE
-    "DejaVu", -- DONE
-    "DragonBreath", -- DONE
-    "FoolsGold", -- DONE
-    "ForgetMeLater", -- DONE
-    "GluttonysStomach", -- DONE
-    "HandOfGreed", -- DONE
-    "MakeupRemover", -- DONE
-    "MysteriousMustache", -- DONE
-    "PaperCut", -- DONE
-    "PigBlood", -- DONE
-    "PossessedBombs", -- DONE
-    "SadTears", -- DONE
-    "Sling", -- DONE
-    "Tech360", -- DONE
-    "TheApocryphon", -- DONE
-    "UnholyMantle",
-    "WelcomeMat", -- DONE
-    "Yang", -- DONE
-    "Yin" -- DONE
+    "CobaltNecklace", -- OLD
+    --"CursedMetronome", -- OLD
+    --"DadsBoots", -- OLD
+    --"DejaVu", -- OLD
+    --"DragonBreath", -- OLD
+    --"FoolsGold", -- OLD
+    --"ForgetMeLater", -- OLD
+    --"GluttonysStomach", -- OLD
+    --"HandOfGreed", -- OLD
+    --"MakeupRemover", -- OLD
+    --"MysteriousMustache", -- OLD
+    --"PaperCut", -- OLD
+    --"PigBlood", -- OLD
+    --"PossessedBombs", -- OLD
+    --"SadTears", -- OLD
+    --"Sling", -- OLD
+    --"Tech360", -- OLD
+    --"TheApocryphon", -- OLD
+    --"UnholyMantle",
+    --"WelcomeMat",
+    --"Yang", -- OLD
+    --"Yin" -- OLD
 }) do
     require("scripts/passives/" .. item)
 end
 
+--[[
 -- Requires all necessary active item Lua files
 for index, item in ipairs({
-    "Anamnesis", -- DONE
+    "Anamnesis", -- OLD
     "BaseballMitt",
     "Birdbath",
-    "ForbiddenFruit", -- DONE
+    "ForbiddenFruit",
     "FullersClub",
     "HurdleHeels",
     "MutantClover",
@@ -727,7 +627,7 @@ end
 
 -- Requires all necessary trinket Lua files
 for index, trinket in ipairs({
-    "BlueMoon", -- DONE
+    "BlueMoon", -- OLD
     "BombsSoul",
     "BrokenGlasses",
     "BurlapSack",
@@ -742,7 +642,7 @@ end
 
 -- Requires all necessary familiar Lua files
 for index, familiar in ipairs({
-    "AstroBaby", -- DONE
+    "AstroBaby", -- OLD
     "HungryHippo",
     "LilRune",
     "RitualCandle",
@@ -754,7 +654,7 @@ end
 
 -- Requires all necessary enemy Lua files
 for index, enemy in ipairs({
-    "Blockage", -- DONE
+    "Blockage", -- OLD
     "Brood",
     "CarrionPrince",
     "Closter",
@@ -780,6 +680,7 @@ for index, enemy in ipairs({
 }) do
     require("scripts/enemies/" .. enemy)
 end
+]]
 
 -------------------------------
 --<<<GENERIC MOD FUNCTIONS>>>-- (Most of these don't even get used)
@@ -843,26 +744,6 @@ end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Exodus.OnNewGame)
 
---[[
-function Exodus:TestData()
-    local entities = Isaac.GetRoomEntities()
-    for i=1, #entities do    
-        if entities[i]:IsVulnerableEnemy() and entities[i]:GetData().AddedToRegister ~= true then
-            Exodus:AddToRegister(entities[i])
-            entities[i]:GetData().AddedToRegister = true
-        end
-    end
-    if GameState.Register[1] ~= nil then
-        Isaac.DebugString("The Entity Register: " .. tostring(GameState.Register[1].Entity.Type))
-    end
-    if GameState.Register[2] ~= nil then
-        Isaac.DebugString("The Entity Register: " .. tostring(GameState.Register[2].Entity.Type))
-    end
-end
-
-Exodus:AddCallback(ModCallbacks.MC_POST_UPDATE, Exodus.TestData)
---]]
-
 --<<<OTHER FUNCTIONS>>>--
 function pExodus.CompareEntities(ent1, ent2)
     if ent1 and ent2 then
@@ -874,14 +755,6 @@ function pExodus.CompareEntities(ent1, ent2)
     return false
 end
 
-function pExodus.GetExodusPlayerByRef(player)
-    for i, ePlayer in ipairs(pExodus.Players) do
-        if ePlayer.ref.Index == player.Index and ePlayer.ref.InitSeed == player.InitSeed then
-            return ePlayer
-        end
-    end
-end
-
 function pExodus:PlayerIsMoving(player)
     for i = 0, 3 do
         if Input.IsActionPressed(i, player.ControllerIndex) then
@@ -890,17 +763,6 @@ function pExodus:PlayerIsMoving(player)
     end
     
     return false
-end
-
-
-function pExodus:UsedPlayer()
-	for pIndex = 1, pExodus.PlayerCount do
-		local player = pExodus.Players[pIndex]
-		
-		if Input.GetActionValue(ButtonAction.ACTION_ITEM, player.ref.ControllerIndex) > 0.0 and not player.ref:NeedsCharge() then
-			return player
-		end
-	end
 end
 
 function pExodus:PlayTearSprite(tear, anm2)
@@ -978,38 +840,3 @@ function Exodus:FakeChargeBarRender()
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_RENDER, Exodus.FakeChargeBarRender)
-
---[[ UNUSED AT THE MOMENT
-function Exodus:FireXHoney(margin, v)
-    local dir = rng:RandomInt(360)
-    local player = Isaac.GetPlayer(0)
-    
-    if player:HasCollectible(CollectibleType.COLLECTIBLE_THE_WIZ) then
-        margin = 360
-    end
-      
-    if player:HasCollectible(CollectibleType.COLLECTIBLE_TRACTOR_BEAM) then
-        margin = 0
-        
-        for i = 1, 4 do
-            EntityLaser.ShootAngle(7, v.Position, dir + (i * 90), 10, NullVector, v)
-        end
-    end
-    
-    for i = 1, 4 do
-        Exodus:FireHoney(Vector.FromAngle(dir + math.random(((i - 1) * 90) - margin,((i - 1) * 90) + margin)) * 10, v)
-    end
-end
-
-function Exodus:FireHoney(dir, v)
-    local player = Isaac.GetPlayer(0)
-    
-    if player:HasCollectible(CollectibleType.COLLECTIBLE_ANTI_GRAVITY) then
-        dir = dir / 100
-    end
-  
-    local honey = Isaac.Spawn(EntityType.ENTITY_EFFECT, Entities.HONEY_SPLAT.variant, 0, v.Position, dir, v)
-    honey.SpriteRotation = honey.Velocity:GetAngleDegrees()
-    honey.GridCollisionClass = GridCollisionClass.COLLISION_WALL
-end
-]]
