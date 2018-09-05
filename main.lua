@@ -591,12 +591,12 @@ for index, item in ipairs({
     "DragonBreath", -- DONE
     "FoolsGold", -- DONE
     "ForgetMeLater", -- DONE
-    --"GluttonysStomach", -- OLD
-    --"HandOfGreed", -- OLD
-    --"MakeupRemover", -- OLD
-    --"MysteriousMustache", -- OLD
-    --"PaperCut", -- OLD
-    --"PigBlood", -- OLD
+    "GluttonysStomach", -- DONE
+    "HandOfGreed", -- DONE
+    "MakeupRemover", -- DONE
+    "MysteriousMustache", -- DONE
+    "PaperCut", -- DONE
+    "PigBlood", -- OLD
     --"PossessedBombs", -- OLD
     --"SadTears", -- OLD
     --"Sling", -- OLD

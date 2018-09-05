@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="7/4/2017 7:17:14 AM" Version="5" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="9/5/2018 9:35:17 AM" Version="6" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="heartdoubleup.png" Id="0"/>
+			<Spritesheet Path="effect_heartdoubleup.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>

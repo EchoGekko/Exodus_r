@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="12/09/2017 7:38:21 PM" Version="6" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="9/5/2018 9:33:57 AM" Version="7" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="heartfill.png" Id="0"/>
+			<Spritesheet Path="effect_gluttonysstomach.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>
