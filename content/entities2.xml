@@ -81,15 +81,15 @@
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
     </entity>
 
-    <entity anm2path="effects/Lantern Tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8"collisionRadius="8" friction="1" id="2" name="Lantern Tear" numGridCollisionPoints="8" shadowsize="8" stageHP="0"variant="5673">
+    <entity anm2path="effects/effect_lanterntear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8"collisionRadius="8" friction="1" id="2" name="Lantern Tear" numGridCollisionPoints="8" shadowsize="8" stageHP="0"variant="5673">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
     </entity>
 
-    <entity anm2path="effects/Lantern Gibs.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Lantern Gibs" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="5673">
+    <entity anm2path="effects/effect_lanterngibs.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Lantern Gibs" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="5673">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
     </entity>
 
-    <entity anm2path="effects/Lantern Fire.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="16" friction="1" id="1000" name="Lantern Fire" numGridCollisionPoints="12" shadowSize="0" stageHP="0" variant="5674">
+    <entity anm2path="effects/effect_lanternfire.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="16" friction="1" id="1000" name="Lantern Fire" numGridCollisionPoints="12" shadowSize="0" stageHP="0" variant="5674">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
     </entity>
 
@@ -261,7 +261,7 @@
 		<gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
 	</entity>
 
-	<entity anm2path="Jump.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Hurdle Jump" numGridCollisionPoints="0" shadowSize="0" stageHP="0" variant="3484192">
+	<entity anm2path="effects/effect_hurdleheel.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Hurdle Jump" numGridCollisionPoints="0" shadowSize="0" stageHP="0" variant="3484192">
 		<gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
 	</entity>
 </entities>

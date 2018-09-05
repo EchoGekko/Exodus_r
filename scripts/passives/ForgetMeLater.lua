@@ -9,11 +9,11 @@ end
 pExodus:AddCustomCallback(pExodus.ExodusCallbacks.MC_ADD_COLLECTIBLE, pExodus.forgetMeLaterAdd, pExodus.ItemId.FORGET_ME_LATER)
 
 function pExodus.forgetMeLaterUpdate()
-    local levelStage = pExodus.Level:GetAbsoluteStage()
-
 	local player = Isaac.GetPlayer(0)
 	
 	if player:HasCollectible(pExodus.ItemId.FORGET_ME_LATER) then
+		local levelStage = pExodus.Level:GetAbsoluteStage()
+
 		if player:GetSprite():IsPlaying("Trapdoor") and levelStage >= NumberFloors then
 			NumberFloors = nil
 			pExodus.Game:StartStageTransition(true, 0)

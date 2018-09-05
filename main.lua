@@ -12,12 +12,17 @@ pExodus = {}
 pExodus.Game = Game()
 pExodus.SFX = SFXManager()
 pExodus.Music = MusicManager()
+pExodus.ItemId = {}
 pExodus.ItemPool = pExodus.Game:GetItemPool()
 pExodus.NullVector = Vector(0, 0)
 pExodus.Room = nil
 pExodus.RoomEntities = nil
+
 pExodus.PreventDMG = false
 pExodus.LiftActive = false
+pExodus.PreventPlayerCollision = false
+pExodus.PreventNPCCollision = false
+
 local rng = RNG()
 
 ----------------------
@@ -52,42 +57,6 @@ pExodus.ChampionFlag = {
     CROWN = 1<<22,
     SKULL = 1<<23,
     ALL = 1<<24
-}
-
--- The Item IDs of every item added by the mod (Public)
-pExodus.ItemId = {
-    ---<<PASSIVES>>---
-    UNHOLY_MANTLE = Isaac.GetItemIdByName("Unholy Mantle"),
-    CLOCK_PIECE_1 = Isaac.GetItemIdByName("Clock Piece 1"),
-    CLOCK_PIECE_2 = Isaac.GetItemIdByName("Clock Piece 2"),
-    CLOCK_PIECE_3 = Isaac.GetItemIdByName("Clock Piece 3"),
-    CLOCK_PIECE_4 = Isaac.GetItemIdByName("Clock Piece 4"),
-    
-    ---<<ACTIVES>>---
-    WRATH_OF_THE_LAMB = Isaac.GetItemIdByName("Wrath of the Lamb"),
-    OMINOUS_LANTERN = Isaac.GetItemIdByName("Ominous Lantern"),
-    PSEUDOBULBAR_AFFECT = Isaac.GetItemIdByName("The Pseudobulbar Affect"),
-    MUTANT_CLOVER = Isaac.GetItemIdByName("Mutant Clover"),
-    TRAGIC_MUSHROOM = Isaac.GetItemIdByName("Tragic Mushroom"),
-    HURDLE_HEELS = Isaac.GetItemIdByName("Hurdle Heels"),
-    FULLERS_CLUB = Isaac.GetItemIdByName("Fuller's Club"),
-    
-    ---<<FAMILIARS>>---
-    HUNGRY_HIPPO = Isaac.GetItemIdByName("Hungry Hippo"),
-    RITUAL_CANDLE = Isaac.GetItemIdByName("Ritual Candle"),
-    LIL_RUNE = Isaac.GetItemIdByName("Lil Rune"),
-    SUNDIAL = Isaac.GetItemIdByName("Sundial"),
-    ROBOBABY_360 = Isaac.GetItemIdByName("Robo-Baby 3.6.0"),
-    
-    ---<<TRINKETS>>---
-    GRID_WORM = Isaac.GetTrinketIdByName("Grid Worm"),
-    BURLAP_SACK = Isaac.GetTrinketIdByName("Burlap Sack"),
-    PET_ROCK = Isaac.GetTrinketIdByName("Pet Rock"),
-    ROTTEN_PENNY = Isaac.GetTrinketIdByName("Rotten Penny"),
-    BROKEN_GLASSES = Isaac.GetTrinketIdByName("Broken Glasses"),
-    BOMBS_SOUL = Isaac.GetTrinketIdByName("Bomb's Soul"),
-    CLAUSTROPHOBIA = Isaac.GetTrinketIdByName("Claustrophobia"),
-    FLYDER = Isaac.GetTrinketIdByName("Flyder")
 }
 
 ----------------------------
@@ -289,7 +258,7 @@ function Exodus.newGame(fromSave)
         pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Load("gfx/effects/Pseudobulbar Icon.anm2", true)
         pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Play("Idle", true)
 
-        pExodus.ItemVariables.HURDLE_HEELS.Icon:Load("gfx/effects/Jump.anm2", true)
+        pExodus.ItemVariables.HURDLE_HEELS.Icon:Load("gfx/effects/effect_hurdleheel.anm2", true)
         pExodus.ItemVariables.HURDLE_HEELS.Icon:Play("Idle", true)
         
         pExodus.ItemVariables.CHARGE_BAR.Bar:Load("gfx/ui/ui_chargebar2.anm2", true)
@@ -497,6 +466,28 @@ end
 
 Exodus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Exodus.EntityTakeDMG)
 
+function Exodus:PlayerCollision(player, entity)
+	local player = Isaac.GetPlayer(0)
+	
+    if pExodus.PreventPlayerCollision then
+		pExodus.PreventPlayerCollision = false
+		return false
+	end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, Exodus.PlayerCollision)
+
+function Exodus:NPCCollision(npc, entity)
+	local player = Isaac.GetPlayer(0)
+	
+    if entity.Type == EntityType.ENTITY_PLAYER and pExodus.PreventNPCCollision then
+		pExodus.PreventNPCCollision = false
+		return false
+	end
+end
+
+Exodus:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, Exodus.NPCCollision)
+
 function Exodus:PostNewRoom()
     local room = pExodus.Game:GetRoom()
     pExodus.Room = room
@@ -617,10 +608,10 @@ for index, item in ipairs({
     "BaseballMitt", -- DONE
     "Birdbath", -- DONE
     "ForbiddenFruit", -- DONE
-    --"FullersClub",
-    --"HurdleHeels",
-    --"MutantClover",
-    --"OminousLantern",
+    --"FullersClub", -- HOLD
+    "HurdleHeels", -- DONE
+    "MutantClover", -- DONE
+    "OminousLantern", -- DONE
     --"PseudobulbarAffect",
     --"TragicMushroom",
     --"WrathOfTheLamb"
@@ -844,3 +835,68 @@ function Exodus:FakeChargeBarRender()
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_RENDER, Exodus.FakeChargeBarRender)
+
+function pExodus:GetRandomEnemyInTheRoom(entity) 
+    local index = 1
+    local possible = {}
+  
+    for i, entity in pairs(Isaac.GetRoomEntities()) do
+        if entity:IsActiveEnemy(false) and entity:CanShutDoors() and entity.Position:DistanceSquared(entity.Position) < 250^2 then
+            possible[index] = entity
+            index = index + 1
+        end
+    end
+  
+    return possible[math.random(1, index)]
+end
+
+function pExodus:SpawnCandleTear(npc, isNormal)
+    local target = pExodus:GetRandomEnemyInTheRoom(npc)
+
+    if target ~= nil then
+        local angle = (target.Position - npc.Position):GetAngleDegrees()
+        local candleTear = Isaac.Spawn(EntityType.ENTITY_TEAR, 0, 0, npc.Position, Vector.FromAngle(1 * angle):Resized(5), player):ToTear()
+        
+        candleTear.TearFlags = candleTear.TearFlags | TearFlags.TEAR_HOMING
+        pExodus:PlayTearSprite(candleTear, "effect_psychictear.anm2")
+        candleTear:GetData().AddedFireBonus = true
+    end
+end
+
+function pExodus:SpawnGib(position, spawner, big)
+    local YOffset = math.random(5, 20)
+    local LanternGibs = Isaac.Spawn(EntityType.ENTITY_EFFECT, pExodus.Entities.LANTERN_GIBS.variant, 0, position, Vector(math.random(-20, 20), -1 * YOffset), spawner)
+    local sprite = LanternGibs:GetSprite()
+    
+    LanternGibs:GetData().Offset = YOffset
+    LanternGibs.SpriteRotation = math.random(360)
+    
+    if LanternGibs.FrameCount == 0 then
+        if not big then
+            sprite:Play("Gib0" .. tostring(math.random(2, 4)),false)
+            sprite:Stop()
+        elseif big then
+            sprite:Play("Gib01",false)
+            sprite:Stop()
+        end
+    end
+end
+
+function pExodus:FireLantern(pos, vel, anim)
+    local player = Isaac.GetPlayer(0)
+    
+    if (pExodus.ItemVariables.OMINOUS_LANTERN.Fired == false or player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY)) and player:HasCollectible(pExodus.ItemId.OMINOUS_LANTERN) then 
+        pExodus.ItemVariables.OMINOUS_LANTERN.LastEnemyHit = nil
+        player:DischargeActiveItem()
+        pExodus.ItemVariables.OMINOUS_LANTERN.Fired = true
+        pExodus.ItemVariables.OMINOUS_LANTERN.Lifted = true
+        
+        local lantern = Isaac.Spawn(EntityType.ENTITY_TEAR, pExodus.Entities.LANTERN_TEAR.variant, 0, pos, vel + player.Velocity, player):ToTear()
+        lantern.FallingSpeed = -10
+        lantern.FallingAcceleration = 1
+        
+        if anim then
+            player:AnimateCollectible(pExodus.ItemId.OMINOUS_LANTERN, "HideItem", "PlayerPickupSparkle")
+        end
+    end
+end

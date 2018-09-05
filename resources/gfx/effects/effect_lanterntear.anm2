@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="18.5.2017 г/ 22:05:42" Version="127" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="9/5/2018 6:19:09 PM" Version="128" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="Lantern Projectile.png" Id="0"/>
+			<Spritesheet Path="effect_lanterntear.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>
