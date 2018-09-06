@@ -315,18 +315,17 @@ end
 
 local function HandleExcessFamiliars(familiar, itemId)
     local player = familiar.Player
-    local ePlayer = pExodus.GetExodusPlayerByRef(player)
     local count = 1
     local expectedCount = player:GetCollectibleNum(itemId)
     
-    if expectedCount > 0 and BoxOfFriendsUses[ePlayer.index] then
-        expectedCount = expectedCount + BoxOfFriendsUses[ePlayer.index]
+    if expectedCount > 0 and BoxOfFriendsUses then
+        expectedCount = expectedCount + BoxOfFriendsUses
     end
     
     for i, ent in pairs(pExodus.RoomEntities) do
         local fam = ent:ToFamiliar()
         
-        if fam and fam.Player.Index == player.Index and fam.Variant == familiar.Variant then
+        if fam and fam.Variant == familiar.Variant then
             if count < expectedCount then
                 count = count + 1
             elseif count >= expectedCount then
@@ -493,7 +492,7 @@ function Exodus:PostNewRoom()
     pExodus.Room = room
     pExodus.RoomEntities = Isaac.GetRoomEntities()
     
-    BoxOfFriendsUses = {}
+    BoxOfFriendsUses = 0
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Exodus.PostNewRoom)
@@ -509,7 +508,7 @@ function Exodus:EvaluateCache(player, cacheFlag)
     if cacheFlag == CacheFlag.CACHE_FAMILIARS then
         for i, familiar in ipairs(FamiliarCaches) do
             if player:HasCollectible(familiar.ItemId) then
-                player:CheckFamiliar(familiar.Variant, player:GetCollectibleNum(familiar.ItemId) + (BoxOfFriendsUses or 0), rng)
+                player:CheckFamiliar(familiar.Variant, player:GetCollectibleNum(familiar.ItemId) + BoxOfFriendsUses, rng)
             end
         end
     end
@@ -614,12 +613,25 @@ for index, item in ipairs({
     "OminousLantern", -- DONE
     "PseudobulbarAffect", -- DONE
     "TragicMushroom", -- DONE
-    --"WrathOfTheLamb"
+    --"WrathOfTheLamb" -- HOLD
 }) do
     require("scripts/actives/" .. item)
 end
 
+-- Requires all necessary familiar Lua files
+for index, familiar in ipairs({
+    "AstroBaby", -- OLD
+    --"HungryHippo",
+    --"LilRune",
+    --"RitualCandle",
+    --"Robobaby360",
+    --"Sundial"
+}) do
+    require("scripts/familiars/" .. familiar)
+end
+
 --[[
+
 -- Requires all necessary trinket Lua files
 for index, trinket in ipairs({
     "BlueMoon", -- OLD
@@ -633,18 +645,6 @@ for index, trinket in ipairs({
     "RottenPenny"
 }) do
     require("scripts/trinkets/" .. trinket)
-end
-
--- Requires all necessary familiar Lua files
-for index, familiar in ipairs({
-    "AstroBaby", -- OLD
-    "HungryHippo",
-    "LilRune",
-    "RitualCandle",
-    "Robobaby360",
-    "Sundial"
-}) do
-    require("scripts/familiars/" .. familiar)
 end
 
 -- Requires all necessary enemy Lua files
