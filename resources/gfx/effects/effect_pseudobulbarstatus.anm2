@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="8/31/2018 4:17:09 PM" Version="19" Fps="60"/>
+	<Info CreatedBy="Unknown" CreatedOn="9/6/2018 2:08:15 AM" Version="20" Fps="60"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="monsters\effect_pseudobulbarstatus.png" Id="0"/>
+			<Spritesheet Path="effect_pseudobulbarstatus.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Main" Id="0" SpritesheetId="0"/>

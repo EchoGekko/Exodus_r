@@ -2,7 +2,7 @@ local ItemId = pExodus.ItemId
 local ItemVariables = pExodus.ItemVariables
 local game = pExodus.Game
 
-pExodus.ItemId.TRAGIC_MUSHROOM = Isaac.GetItemIdByName("The Pseudobulbar Affect")
+pExodus.ItemId.PSEUDOBULBAR_AFFECT = Isaac.GetItemIdByName("The Pseudobulbar Affect")
 
 function pExodus.pseudobulbarTurretUpdate()
     local player = Isaac.GetPlayer(0)
@@ -40,15 +40,15 @@ function pExodus.pseudobulbarAffectRender()
         
         for i, entity in pairs(Isaac.GetRoomEntities()) do
             if entity:GetData().IsPseudobulbarTurret then
-                ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Render(game:GetRoom():WorldToScreenPosition(entity.Position + Vector(0, entity.Size)), NullVector, NullVector)
+                ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Render(game:GetRoom():WorldToScreenPosition(entity.Position + Vector(0, entity.Size)), pExodus.NullVector, pExodus.NullVector)
             end
         end
     end
 end
 
-Exodus:AddCallback(ModCallbacks.MC_POST_RENDER, Exodus.pseudobulbarAffectRender)
+pExodus:AddCallback(ModCallbacks.MC_POST_RENDER, pExodus.pseudobulbarAffectRender)
 
-function Exodus:pseudobulbarAffectUse(active)
+function pExodus.pseudobulbarAffectUse(active)
     local player = Isaac.GetPlayer(0)
 	
 	if active == ItemId.PSEUDOBULBAR_AFFECT then
@@ -62,4 +62,4 @@ function Exodus:pseudobulbarAffectUse(active)
 	end
 end
 
-Exodus:AddCallback(ModCallbacks.MC_USE_ITEM, Exodus.pseudobulbarAffectUse)
+pExodus:AddCallback(ModCallbacks.MC_USE_ITEM, pExodus.pseudobulbarAffectUse)

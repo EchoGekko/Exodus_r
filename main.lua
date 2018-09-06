@@ -255,7 +255,7 @@ function Exodus.newGame(fromSave)
         }
         
         -- Pre-start variable handling that could not be done in the table declaration
-        pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Load("gfx/effects/Pseudobulbar Icon.anm2", true)
+        pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Load("gfx/effects/effect_pseudobulbarstatus.anm2", true)
         pExodus.ItemVariables.PSEUDOBULBAR_AFFECT.Icon:Play("Idle", true)
 
         pExodus.ItemVariables.HURDLE_HEELS.Icon:Load("gfx/effects/effect_hurdleheel.anm2", true)
@@ -280,10 +280,10 @@ function Exodus.newGame(fromSave)
         
         -- Ensures the player's stats are properly reset along with the variables
         local player = Isaac.GetPlayer(0)
-        if player then
-            player:AddCacheFlags(CacheFlag.CACHE_ALL)
-            player:EvaluateItems()
-        end
+		if player then
+			player:AddCacheFlags(CacheFlag.CACHE_ALL)
+			player:EvaluateItems()
+		end
     end
     
 	-- Ensures the RNG stays seeded to the run's seed
@@ -735,6 +735,8 @@ function Exodus:OnNewGame(fromSave)
     if not fromSave then
         GameState.Register = {}
     end
+
+	Exodus.newGame(fromSave)
 end
 
 Exodus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Exodus.OnNewGame)
@@ -913,5 +915,5 @@ function pExodus:FireTurretBullet(pos, vel, spawner)
     local sprite = TurretBullet:GetSprite()
     sprite.Color = Color(sprite.Color.R, sprite.Color.G, sprite.Color.B, sprite.Color.A, 100, 0, 0)
     
-    pExodus:PlayTearSprite(TurretBullet, "Blood Tear.anm2")
+    pExodus:PlayTearSprite(TurretBullet, "effect_bloodtear.anm2")
 end
