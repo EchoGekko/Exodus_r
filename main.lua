@@ -612,8 +612,8 @@ for index, item in ipairs({
     "HurdleHeels", -- DONE
     "MutantClover", -- DONE
     "OminousLantern", -- DONE
-    --"PseudobulbarAffect",
-    --"TragicMushroom",
+    "PseudobulbarAffect", -- DONE
+    "TragicMushroom", -- DONE
     --"WrathOfTheLamb"
 }) do
     require("scripts/actives/" .. item)
@@ -899,4 +899,19 @@ function pExodus:FireLantern(pos, vel, anim)
             player:AnimateCollectible(pExodus.ItemId.OMINOUS_LANTERN, "HideItem", "PlayerPickupSparkle")
         end
     end
+end
+
+function pExodus:FireTurretBullet(pos, vel, spawner)
+    local player = Isaac.GetPlayer(0)
+    local TurretBullet = player:FireTear(pos, vel, false, true, false)
+    
+    if spawner:IsBoss() then
+        TurretBullet.CollisionDamage = TurretBullet.CollisionDamage * 1.5
+        TurretBullet.Scale = TurretBullet.Scale * 1.5
+    end
+    
+    local sprite = TurretBullet:GetSprite()
+    sprite.Color = Color(sprite.Color.R, sprite.Color.G, sprite.Color.B, sprite.Color.A, 100, 0, 0)
+    
+    pExodus:PlayTearSprite(TurretBullet, "Blood Tear.anm2")
 end
