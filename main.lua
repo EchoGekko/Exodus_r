@@ -647,35 +647,36 @@ for index, trinket in ipairs({
     require("scripts/trinkets/" .. trinket)
 end
 
+]]
+
 -- Requires all necessary enemy Lua files
 for index, enemy in ipairs({
-    "Blockage", -- OLD
-    "Brood",
-    "CarrionPrince",
-    "Closter",
-    "DankDip",
-    "DeathsEye",
-    "DrownedShroomman",
-    "FleshDeathsEye",
-    "Flyerball",
-    "Halfblind",
-    "Headcase",
-    "HeartFlies",
-    "Hollowhead",
-    "Hothead",
-    "IronLung",
-    "Lithopedion",
-    "Occultist",
-    "Patriarch",
-    "PoisonHemisphere",
-    "PoisonMastermind",
-    "ScaryShroomman",
-    "Wingleader",
-    "Wombshroom"
+    "Blockage", -- DONE
+    --"Brood",
+    --"CarrionPrince",
+    --"Closter",
+    --"DankDip",
+    --"DeathsEye",
+    --"DrownedShroomman",
+    --"FleshDeathsEye",
+    --"Flyerball",
+    --"Halfblind",
+    --"Headcase",
+    --"HeartFlies",
+    --"Hollowhead",
+    --"Hothead",
+    --"IronLung",
+    --"Lithopedion",
+    --"Occultist",
+    --"Patriarch",
+    --"PoisonHemisphere",
+    --"PoisonMastermind",
+    --"ScaryShroomman",
+    --"Wingleader",
+    --"Wombshroom"
 }) do
     require("scripts/enemies/" .. enemy)
 end
-]]
 
 -------------------------------
 --<<<GENERIC MOD FUNCTIONS>>>-- (Most of these don't even get used)
